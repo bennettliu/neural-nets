@@ -14,13 +14,14 @@ public class Main {
       Network network = new Network(inputNodes, hiddenLayerNodes, outputNodes);
 
       // Initialize test cases
-      double testset[][] = {
+      double testset[][] = 
+      {
          {0, 0},
          {0, 1},
          {1, 0},
          {1, 1}
       };
-      double truthset[] = {0, 0, 0, 1};
+      double truthset[] = {0, 1, 1, 0};
 
       // Evaluate the network for all test cases
       for (int i = 0; i < testset.length; i++) 
@@ -34,13 +35,10 @@ public class Main {
       }
       network.exportNet("og.txt");
 
-
       NetworkTrainer trainer = new NetworkTrainer(network, testset, truthset);
       System.out.println(trainer.calcError());
-      for(int i = 0; i < 1000; i++)
-      {
-         trainer.improve();
-      }
+
+      trainer.train(1000000, 0.0001);
 
       network = trainer.getNetwork();
 

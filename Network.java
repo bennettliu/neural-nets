@@ -1,6 +1,6 @@
 /*
  * Authored by Bennett Liu on September 18th, 2019
- * Network.java defines an implementation of a feed-forward multi-layer neural network
+ * Network.java implements a multi-layer perceptron neural network
  */
 import java.util.Random; 
 import java.io.*;
@@ -105,10 +105,10 @@ public class Network
    /*
     * dF returns the derivative of the function thresholdF
     */
-    public double dF(double x) 
-    {
-       return thresholdF(x) * (1 - thresholdF(x));
-    }
+   public double dF(double x) 
+   {
+      return thresholdF(x) * (1 - thresholdF(x));
+   }
    
    /*
     * dotProduct calculates the dot product of node (n, i)'s input activation values and weights, given n and i

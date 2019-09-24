@@ -53,6 +53,15 @@ public class NetworkTrainer
       return DTotalweights;
    }
 
+   public void train(int maxSteps, double minError) {
+      int steps = 0;
+      while (steps < maxSteps && error > minError)
+      {
+         improve();
+         steps++;
+      }
+   }
+
    public void improve() {
       double Dweights[][][] = getDTotalError();
       double oldWeights[][][] = new double[network.layers - 1][network.maxNodes][network.maxNodes];
@@ -68,17 +77,16 @@ public class NetworkTrainer
 
       double newWeights[][][] = new double[network.layers - 1][network.maxNodes][network.maxNodes];
       double newError = 1 << 29;
-      while (newError > error && trainingFactor > 0.000001)
+      while (newError > error)
       {
-         // System.out.println("running");
-         // newWeights = oldWeights.clone();
-         for (int n = 0; n < Dweights.length; n++) {
+         for (int n = 0; n < Dweights.length; n++) {                             // copy oldWeights into newWeights
             for (int i = 0; i < Dweights[0].length; i++) {
                for (int j = 0; j < Dweights[0][0].length; j++) {
                   newWeights[n][i][j] = oldWeights[n][i][j];
                }
             }
          }
+
          for (int n = 0; n < Dweights.length; n++) {
             for (int i = 0; i < Dweights[0].length; i++) {
                for (int j = 0; j < Dweights[0][0].length; j++) {
@@ -92,7 +100,6 @@ public class NetworkTrainer
          if(newError < error) trainingFactor *= 2;
          else trainingFactor /= 2;
       }
-      // System.out.println(newError);
       if(newError < error) 
       {
          error = newError;
@@ -101,8 +108,7 @@ public class NetworkTrainer
       {
          network.setWeights(oldWeights);
       }
-      // System.out.println(oldWeights[0][0][0]);
-      System.out.println(trainingFactor + " " + error + " " + calcError());
+      System.out.println(trainingFactor + " " + error);
       return;
    }
 
