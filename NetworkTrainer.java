@@ -112,6 +112,25 @@ public class NetworkTrainer
       return;
    }
 
+   public void printTest() 
+   {
+      // Evaluate the network for all test cases
+      for (int i = 0; i < testcases.length; i++) 
+      {
+         System.out.println(String.format("Case %d:", i + 1));
+         for (int j = 0; j < testcases[0].length; j++)
+         {
+            System.out.println(String.format("Input %d: %.15f", j+1, testcases[i][0]));
+         }
+         // System.out.println("Result: " + network.eval(testcases[i]));
+         System.out.println(String.format("Result: %.15f", network.eval(testcases[i])));
+         System.out.println(String.format("Answer: %.15f", truths[i]));
+         System.out.println();
+      }
+      System.out.println(String.format("Total Error: %.15f", error));
+      System.out.println();
+   }
+
    public Network getNetwork() 
    {
       return network;

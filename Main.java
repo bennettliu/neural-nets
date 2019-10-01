@@ -1,6 +1,6 @@
 /*
  * Authored by Bennett Liu on September 18th, 2019
- * 
+ * The main class runs 
  */
 
 public class Main {
@@ -23,37 +23,21 @@ public class Main {
       };
       double truthset[] = {0, 1, 1, 0};
 
-      // Evaluate the network for all test cases
-      for (int i = 0; i < testset.length; i++) 
-      {
-         System.out.println(String.format("Case %d", i));
-         System.out.println(String.format("Input 1: %f", testset[i][0]));
-         System.out.println(String.format("Input 2: %f", testset[i][1]));
-         System.out.println("Result: " + network.eval(testset[i]));
-         System.out.println("Answer: " + truthset[i]);
-         System.out.println();
-      }
-      network.exportNet("og.txt");
-
+      // Initialize trainer
       NetworkTrainer trainer = new NetworkTrainer(network, testset, truthset);
       System.out.println(trainer.calcError());
 
-      trainer.train(1000000, 0.0001);
+      // Evaluate the initial network for all test cases
+      trainer.printTest();
+      network.exportNet("startPoint.txt");
 
+      // Train the network
+      trainer.train(100000, 0.001);
+
+      // Evaluate the final network for all test cases
+      trainer.printTest();
       network = trainer.getNetwork();
-
-      for (int i = 0; i < testset.length; i++) 
-      {
-         System.out.println(String.format("Case %d", i));
-         System.out.println(String.format("Input 1: %f", testset[i][0]));
-         System.out.println(String.format("Input 2: %f", testset[i][1]));
-         System.out.println("Result: " + network.eval(testset[i]));
-         System.out.println("Answer: " + truthset[i]);
-         System.out.println();
-      }
-      System.out.println(trainer.calcError());
-      // Export the network to config.txt
-      network.exportNet("config.txt");
+      network.exportNet("endPoint.txt");
       
       return;
     }
