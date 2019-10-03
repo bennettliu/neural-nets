@@ -66,10 +66,9 @@ public class Network
       double rangeMin = 0;
       double rangeMax = 1;
       for (int n = 0; n < layers - 1; n++) {
-         for (int i = 0; i < maxNodes; i++) {
-            for (int j = 0; j < maxNodes; j++) {
+         for (int i = 0; i < nodesInLayer[n]; i++) {
+            for (int j = 0; j < nodesInLayer[n + 1]; j++) {
                weights[n][i][j] = rangeMin + (rangeMax - rangeMin) * random.nextDouble();
-               // weights[n][i][j] = 1;
             }
          }
       }
@@ -193,8 +192,8 @@ public class Network
 
          writer.append("weights: \n");
          for (int n = 0; n < layers - 1; n++) {
-            for (int i = 0; i < maxNodes; i++) {
-               for (int j = 0; j < maxNodes; j++) {
+            for (int i = 0; i < nodesInLayer[n]; i++) {
+               for (int j = 0; j < nodesInLayer[n + 1]; j++) {
                   writer.append(String.format("%15.8f ", weights[n][i][j]));
                }
                writer.append("\n");

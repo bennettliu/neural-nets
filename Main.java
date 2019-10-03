@@ -17,6 +17,7 @@ public class Main {
       double testset[][];
       double truthset[][];
 
+      // Take inputs
       Scanner in = new Scanner(System.in);
       System.out.println("How many input nodes: ");
       inputNodes = in.nextInt();
@@ -34,6 +35,7 @@ public class Main {
       System.out.println("How many output nodes: ");
       outputNodes = in.nextInt();
 
+      // Take testcases
       System.out.println("How many test cases: ");
       testcases = in.nextInt();
 
@@ -62,7 +64,7 @@ public class Main {
       trainer.printTest();
       network.exportNet("startPoint.txt");
 
-      if (inputNodes == 2 && outputNodes == 1)
+      if (outputNodes == 1)
       {
          // Train the network
          trainer.train(100000, 0.001);
