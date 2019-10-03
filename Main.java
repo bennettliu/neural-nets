@@ -13,20 +13,9 @@ public class Main {
       int outputNodes;
 
       // Initialize test cases
-      double testset[][] = 
-      {
-         {0, 0},
-         {0, 1},
-         {1, 0},
-         {1, 1}
-      };
-      double truthset[][] = 
-      {
-         {0}, 
-         {1}, 
-         {1}, 
-         {0}
-      };
+      int testcases;
+      double testset[][];
+      double truthset[][];
 
       Scanner in = new Scanner(System.in);
       System.out.println("How many input nodes: ");
@@ -44,6 +33,26 @@ public class Main {
 
       System.out.println("How many output nodes: ");
       outputNodes = in.nextInt();
+
+      System.out.println("How many test cases: ");
+      testcases = in.nextInt();
+
+      testset = new double[testcases][inputNodes];
+      truthset = new double[testcases][outputNodes];
+      for (int i = 1; i <= testcases; i++) 
+      {
+         System.out.println(String.format("Test Case %d", i));
+         for (int j = 1; j <= inputNodes; j++)
+         {
+            System.out.println(String.format("Input %d:", j));
+            testset[i - 1][j - 1] = in.nextDouble();
+         }
+         for (int j = 1; j <= outputNodes; j++)
+         {
+            System.out.println(String.format("Output %d:", j));
+            truthset[i - 1][j - 1] = in.nextDouble();
+         }
+      }
 
       // Create network
       Network network = new Network(inputNodes, hiddenLayerNodes, outputNodes);
