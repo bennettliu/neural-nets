@@ -7,10 +7,10 @@ import java.util.*;
 public class Main {
    public static void main(String[] args) {
       //Network parameters
-      int inputNodes = 2;
-      int hiddenLayers = 1;
-      int hiddenLayerNodes[] = {2};
-      int outputNodes = 1;
+      int inputNodes;
+      int hiddenLayers;
+      int hiddenLayerNodes[];
+      int outputNodes;
 
       // Initialize test cases
       double testset[][] = 
@@ -28,6 +28,23 @@ public class Main {
          {0}
       };
 
+      Scanner in = new Scanner(System.in);
+      System.out.println("How many input nodes: ");
+      inputNodes = in.nextInt();
+
+      System.out.println("How many hidden layers: ");
+      hiddenLayers = in.nextInt();
+
+      hiddenLayerNodes = new int[hiddenLayers];
+      for (int  i = 1; i <= hiddenLayers; i++) 
+      {
+         System.out.println(String.format("How many nodes in hidden layer %d: ", i));
+         hiddenLayerNodes[i - 1] = in.nextInt();
+      }
+
+      System.out.println("How many output nodes: ");
+      outputNodes = in.nextInt();
+
       // Create network
       Network network = new Network(inputNodes, hiddenLayerNodes, outputNodes);
 
@@ -36,7 +53,7 @@ public class Main {
       trainer.printTest();
       network.exportNet("startPoint.txt");
 
-      if (inputNodes == 2 && hiddenLayerNodes[0] == 2 && outputNodes == 1)
+      if (inputNodes == 2 && outputNodes == 1)
       {
          // Train the network
          trainer.train(100000, 0.001);

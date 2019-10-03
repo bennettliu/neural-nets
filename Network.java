@@ -45,9 +45,9 @@ public class Network
       nodesInLayer[outputLayer] = outputs;
 
       // calculate the maximum number of nodes in any layer
-      maxNodes = Math.max(inputs, outputs);
-      for (int i = 0; i < hiddenLayers; i++) maxNodes = Math.max(maxNodes, nodesInLayer[i]);
-      
+      maxNodes = 0;
+      for (int i = 0; i < nodesInLayer.length; i++) maxNodes = Math.max(maxNodes, nodesInLayer[i]);
+
       // initialize weight and activation matrices
       initWeights();
       initActivationVals();
