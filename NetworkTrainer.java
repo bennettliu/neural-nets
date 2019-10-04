@@ -30,9 +30,12 @@ public class NetworkTrainer
       double totalError = 0;
       for (int i = 0; i < testInputs.length; i++)
       {
-         double result = network.eval(testInputs[i])[0];
+         double[] results = network.eval(testInputs[i]);
 
-         totalError += (testOutputs[i][0] - result) * (testOutputs[i][0] - result);
+         for (int j = 0; j < results.length; j++)
+         {
+            totalError += (testOutputs[i][j] - results[j]) * (testOutputs[i][j] - results[j]);
+         }
       }
       totalError /= 2;
       return totalError;
@@ -41,7 +44,8 @@ public class NetworkTrainer
    public double[][][] getDTotalError() {
       double DTotalweights[][][] = new double[network.layers - 1][network.maxNodes][network.maxNodes];
       for (int testcase = 0; testcase < testInputs.length; testcase++) {
-         double Dweights[][][] = network.getDError(testInputs[testcase], testOutputs[testcase][0]);
+         // double Dweights[][][] = network.getDError(testInputs[testcase], testOutputs[testcase][0]);
+         double Dweights[][][] = network.getDErrors(testInputs[testcase], testOutputs[testcase]);
          for (int n = 0; n < Dweights.length; n++) {
             for (int i = 0; i < Dweights[0].length; i++) {
                for (int j = 0; j < Dweights[0][0].length; j++) {

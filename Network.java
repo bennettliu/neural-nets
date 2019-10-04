@@ -147,25 +147,28 @@ public class Network
       return Arrays.copyOfRange(activationVals[outputLayer], 0, inputs);      // return output value
    }
 
-   public double[][][] getDError(double testcase[], double truth) {
+   public double[][][] getDErrors(double testcase[], double[] truths) {
       // this might initialize hella random vals but we'll see ig
       double Dweights[][][] = new double[weights.length][weights[0].length][weights[0][0].length];
-      double result = eval(testcase)[0];
+      double[] results = eval(testcase);
       
-      // second layer
-      for (int i = 0; i < nodesInLayer[1]; i++)                   // for each node (row i) in layer n
+      for (int output = 0; output < truths.length; output++)
       {
-         double dp = dotProduct(2, 0);
-         Dweights[1][i][0] = -(result - truth) * dF(dp) * activationVals[1][i];
-      }
-
-      // first layer
-      for (int i = 0; i < nodesInLayer[0];i++) {
-         for (int j = 0; j < nodesInLayer[1]; j++)                   // for each node (row i) in layer n
+         // second layer
+         for (int i = 0; i < nodesInLayer[1]; i++)                   // for each node (row i) in layer n
          {
-            double dp1 = dotProduct(1, j);
-            double dp2 = dotProduct(2, 0);
-            Dweights[0][i][j] = -(result - truth) * dF(dp1) * dF(dp2) * activationVals[0][i] * weights[1][j][0];
+            double dp = dotProduct(2, output);
+            Dweights[1][i][output] += -(results[output] - truths[output]) * dF(dp) * activationVals[1][i];
+         }
+
+         // first layer
+         for (int i = 0; i < nodesInLayer[0];i++) {
+            for (int j = 0; j < nodesInLayer[1]; j++)                   // for each node (row i) in layer n
+            {
+               double dp1 = dotProduct(1, j);
+               double dp2 = dotProduct(2, output);
+               Dweights[0][i][j] = -(results[output] - truths[output]) * dF(dp1) * dF(dp2) * activationVals[0][i] * weights[1][j][output];
+            }
          }
       }
       
@@ -208,7 +211,6 @@ public class Network
 
    public void setWeights(double newWeights[][][]) 
    {
-      // Should probably do some validity checking here, maybe make a boolean
       weights = newWeights;
       return;
    }
