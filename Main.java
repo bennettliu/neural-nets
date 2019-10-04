@@ -1,24 +1,25 @@
 /*
  * Authored by Bennett Liu on September 18th, 2019
- * The main class runs 
+ * 
+ * The main class takes inputs defining the structure of the perceptron model, 
+ * as found in Network.java and specifying a test set. It then trains the model, 
+ * provided it has one hidden layer and one output node.
  */
 import java.util.*;
 
 public class Main {
    public static void main(String[] args) {
-      //Network parameters
-      int inputNodes;
-      int hiddenLayers;
-      int hiddenLayerNodes[];
-      int outputNodes;
+      // Network and test case parameters
+      int inputNodes;                        // The number of inputs
+      int hiddenLayers;                      // The number of hidden layers
+      int hiddenLayerNodes[];                // How many nodes are in each layer
+      int outputNodes;                       // The number of outputs
+      int testcases;                         // The number of test cases
+      double testInputs[][];                 // The inputs for each test case
+      double testOutputs[][];                // The outputs for each test case
 
-      // Initialize test cases
-      int testcases;
-      double testset[][];
-      double truthset[][];
-
-      // Take inputs
-      Scanner in = new Scanner(System.in);
+      // Take network inputs
+      Scanner in = new Scanner(System.in);      
       System.out.println("How many input nodes: ");
       inputNodes = in.nextInt();
 
@@ -35,24 +36,24 @@ public class Main {
       System.out.println("How many output nodes: ");
       outputNodes = in.nextInt();
 
-      // Take testcases
+      // Take testcase as inputs
       System.out.println("How many test cases: ");
       testcases = in.nextInt();
 
-      testset = new double[testcases][inputNodes];
-      truthset = new double[testcases][outputNodes];
+      testInputs = new double[testcases][inputNodes];
+      testOutputs = new double[testcases][outputNodes];
       for (int i = 1; i <= testcases; i++) 
       {
          System.out.println(String.format("Test Case %d", i));
          for (int j = 1; j <= inputNodes; j++)
          {
             System.out.println(String.format("Input %d:", j));
-            testset[i - 1][j - 1] = in.nextDouble();
+            testInputs[i - 1][j - 1] = in.nextDouble();
          }
          for (int j = 1; j <= outputNodes; j++)
          {
             System.out.println(String.format("Output %d:", j));
-            truthset[i - 1][j - 1] = in.nextDouble();
+            testOutputs[i - 1][j - 1] = in.nextDouble();
          }
       }
 
@@ -60,17 +61,15 @@ public class Main {
       Network network = new Network(inputNodes, hiddenLayerNodes, outputNodes);
 
       // Initialize trainer and evaluate the initial network for all test cases
-      NetworkTrainer trainer = new NetworkTrainer(network, testset, truthset);
+      NetworkTrainer trainer = new NetworkTrainer(network, testInputs, testOutputs);
       trainer.printTest();
       network.exportNet("startPoint.txt");
 
-      if (outputNodes == 1)
+      if (hiddenLayers == 1)
       {
-         // Train the network
-         trainer.train(100000, 0.001);
+         trainer.train(100000, 0.001);          // Train the network
 
-         // Evaluate the final network for all test cases
-         trainer.printTest();
+         trainer.printTest();                   // Evaluate the final network for all test cases
          network = trainer.getNetwork();
          network.exportNet("endPoint.txt");
       }

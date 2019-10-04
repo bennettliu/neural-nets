@@ -1,8 +1,8 @@
 /*
  * Authored by Bennett Liu on September 18th, 2019
- * Network.java implements a multi-layer perceptron neural network
+ * Network.java implements a multi-layer perceptron neural network customizable for any dimensions.
  */
-import java.util.Random; 
+import java.util.*; 
 import java.io.*;
 
 /*
@@ -20,8 +20,8 @@ public class Network
    int nodesInLayer[];        // The number of nodes per layer
    int maxNodes;              // The maximum number of nodes in a layer
 
-   double weights[][][];        // Weight in weight layer m connecting left row to right row: [m][left][right]
-   double activationVals[][];  // Value in model at layer n, row r: [n][r]
+   double weights[][][];      // Weight in weight layer m connecting left row to right row: [m][left][right]
+   double activationVals[][]; // Value in model at layer n, row r: [n][r]
 
    /*
     * The Network constructor creates a new Network, given the number of input nodes, nodes in each hidden layer, and output nodes.
@@ -131,7 +131,7 @@ public class Network
    /*
     * eval evaluates and returns the output of the network, given a test case
     */
-   public double eval(double testcase[]) 
+   public double[] eval(double testcase[]) 
    {
       loadTestcase(testcase);
 
@@ -140,19 +140,17 @@ public class Network
       {
          for (int i = 0; i < nodesInLayer[n]; i++)                   // for each node (row i) in layer n
          {
-            // System.out.printf(String.format("DEBUG: a[%d][%d] = f(", n, i));
             activationVals[n][i] = thresholdF(dotProduct(n, i));     // Calculate activation value
-            // System.out.printf(")\n");
          }
       }
       
-      return activationVals[outputLayer][0];                         // return output value
+      return Arrays.copyOfRange(activationVals[outputLayer], 0, inputs);      // return output value
    }
 
    public double[][][] getDError(double testcase[], double truth) {
       // this might initialize hella random vals but we'll see ig
       double Dweights[][][] = new double[weights.length][weights[0].length][weights[0][0].length];
-      double result = eval(testcase);
+      double result = eval(testcase)[0];
       
       // second layer
       for (int i = 0; i < nodesInLayer[1]; i++)                   // for each node (row i) in layer n

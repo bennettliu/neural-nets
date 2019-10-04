@@ -6,8 +6,8 @@
 public class NetworkTrainer
 {
    Network network;           // The network to be trained
-   double testcases[][];
-   double truths[][];
+   double testInputs[][];
+   double testOutputs[][];
    double weights[][][];
    double error;
    double trainingFactor;
@@ -15,12 +15,12 @@ public class NetworkTrainer
    /*
     * The Network constructor creates a new Network, given the number of input nodes, nodes in each hidden layer, and output nodes.
     */
-   public NetworkTrainer(Network initialNetwork, double testset[][], double[][] truthset) 
+   public NetworkTrainer(Network initialNetwork, double inputs[][], double[][] outputs) 
    {
       // validation needed
       network = initialNetwork;
-      testcases = testset;
-      truths = truthset;
+      testInputs = inputs;
+      testOutputs = outputs;
       error = calcError();
       trainingFactor = 0.1;
       return;
@@ -28,11 +28,11 @@ public class NetworkTrainer
 
    public double calcError() {
       double totalError = 0;
-      for (int i = 0; i < testcases.length; i++)
+      for (int i = 0; i < testInputs.length; i++)
       {
-         double result = network.eval(testcases[i]);
+         double result = network.eval(testInputs[i])[0];
 
-         totalError += (truths[i][0] - result) * (truths[i][0] - result);
+         totalError += (testOutputs[i][0] - result) * (testOutputs[i][0] - result);
       }
       totalError /= 2;
       return totalError;
@@ -40,8 +40,8 @@ public class NetworkTrainer
 
    public double[][][] getDTotalError() {
       double DTotalweights[][][] = new double[network.layers - 1][network.maxNodes][network.maxNodes];
-      for (int testcase = 0; testcase < testcases.length; testcase++) {
-         double Dweights[][][] = network.getDError(testcases[testcase], truths[testcase][0]);
+      for (int testcase = 0; testcase < testInputs.length; testcase++) {
+         double Dweights[][][] = network.getDError(testInputs[testcase], testOutputs[testcase][0]);
          for (int n = 0; n < Dweights.length; n++) {
             for (int i = 0; i < Dweights[0].length; i++) {
                for (int j = 0; j < Dweights[0][0].length; j++) {
@@ -107,15 +107,32 @@ public class NetworkTrainer
    public void printTest() 
    {
       // Evaluate the network for all test cases
-      for (int i = 0; i < testcases.length; i++) 
+      for (int i = 0; i < testInputs.length; i++) 
       {
          System.out.println(String.format("Case %d:", i + 1));
-         for (int j = 0; j < testcases[0].length; j++)
+
+         System.out.print("Inputs:");
+         for (int j = 0; j < testInputs[0].length; j++)
          {
-            System.out.println(String.format("Input %d: %.15f", j+1, testcases[i][0]));
+            System.out.print(String.format(" %.15f", testInputs[i][j]));
          }
-         System.out.println(String.format("Result: %.15f", network.eval(testcases[i])));
-         System.out.println(String.format("Answer: %.15f", truths[i][0]));
+         System.out.println();
+
+         System.out.print("Results:");
+         double results[] = network.eval(testInputs[i]);
+         for (int j = 0; j < results.length; j++)
+         {
+            System.out.print(String.format(" %.15f", results[j]));
+         }
+         System.out.println();
+
+         System.out.print("Answers:");
+         for (int j = 0; j < testOutputs[0].length; j++)
+         {
+            System.out.print(String.format(" %.15f", testOutputs[i][j]));
+         }
+         System.out.println();
+
          System.out.println();
       }
       System.out.println(String.format("Total Error: %.15f", error));
