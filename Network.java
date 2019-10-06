@@ -144,7 +144,7 @@ public class Network
          }
       }
       
-      return Arrays.copyOfRange(activationVals[outputLayer], 0, inputs);      // return output value
+      return Arrays.copyOfRange(activationVals[outputLayer], 0, outputs);     // return output value
    }
 
    public double[][][] getDErrors(double testcase[], double[] truths) {
