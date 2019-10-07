@@ -26,6 +26,9 @@ public class NetworkTrainer
       return;
    }
 
+   /*
+    * calcError returns the total error when the network is run for each input-output pair.
+    */
    public double calcError() {
       double totalError = 0;
       for (int i = 0; i < testInputs.length; i++)
@@ -41,10 +44,12 @@ public class NetworkTrainer
       return totalError;
    }
 
+   /*
+    * getDTotalError returns the sum of the partial derivatives relative to weight for all input-output pairs.
+    */
    public double[][][] getDTotalError() {
       double DTotalweights[][][] = new double[network.layers - 1][network.maxNodes][network.maxNodes];
       for (int testcase = 0; testcase < testInputs.length; testcase++) {
-         // double Dweights[][][] = network.getDError(testInputs[testcase], testOutputs[testcase][0]);
          double Dweights[][][] = network.getDErrors(testInputs[testcase], testOutputs[testcase]);
          for (int n = 0; n < Dweights.length; n++) {
             for (int i = 0; i < Dweights[0].length; i++) {
@@ -57,6 +62,9 @@ public class NetworkTrainer
       return DTotalweights;
    }
 
+   /*
+    * train runs multiple steps while some conditions are still met.
+    */
    public void train(int maxSteps, double minError) {
       int steps = 0;
       while (steps < maxSteps && error > minError)
@@ -66,6 +74,11 @@ public class NetworkTrainer
       }
    }
 
+   /*
+    * improve changes the network's weights to decrease the total error. Modifies weights by the training 
+    * factor (lambda) multiplied by the partial derivatives of total error.
+    * Adapts lambda by factors of 2 to ensure that it does not overstep
+    */
    public void improve() {
       double Dweights[][][] = getDTotalError();
       double oldWeights[][][] = new double[network.layers - 1][network.maxNodes][network.maxNodes];
@@ -108,6 +121,9 @@ public class NetworkTrainer
       return;
    }
 
+   /*
+    * printTest prints the network's results for each input-output pair and other debug information.
+    */
    public void printTest() 
    {
       // Evaluate the network for all test cases
@@ -143,6 +159,9 @@ public class NetworkTrainer
       System.out.println();
    }
 
+   /*
+    * getNetwork returns the trained network
+    */
    public Network getNetwork() 
    {
       return network;

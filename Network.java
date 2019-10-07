@@ -147,6 +147,10 @@ public class Network
       return Arrays.copyOfRange(activationVals[outputLayer], 0, outputs);     // return output value
    }
 
+   /*
+    * getDErrors returns the partial derivative of the total error of each output of a given test case 
+    * relative to each weight.
+    */
    public double[][][] getDErrors(double testcase[], double[] truths) {
       // this might initialize hella random vals but we'll see ig
       double Dweights[][][] = new double[weights.length][weights[0].length][weights[0][0].length];
@@ -209,6 +213,9 @@ public class Network
       return;
    }
 
+   /*
+    * setWeights changes the network's weights to a given set of weights 
+    */
    public void setWeights(double newWeights[][][]) 
    {
       weights = newWeights;
