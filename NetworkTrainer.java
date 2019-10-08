@@ -2,6 +2,7 @@
  * Authored by Bennett Liu on September 20th, 2019
  * NetworkTrainer.java defines a class which trains a feed-forward multi-layer neural network on a training set
  */
+import java.util.*;
 
 public class NetworkTrainer
 {
@@ -65,19 +66,30 @@ public class NetworkTrainer
    /*
     * train runs multiple steps while some conditions are still met.
     */
-   public void train(int maxSteps, double minError) {
-      int steps = 0;
-      while (steps < maxSteps && error > minError)
+   public void train(int maxSteps, double minError, int savePeriod) {
+      int step = 0;
+      while (step < maxSteps && error > minError && trainingFactor > 0)
       {
+         step++;
          improve();
-         steps++;
+         if(step%savePeriod == 0)
+         {
+            printTest();
+            network.exportNet("logs/" + (new Date()).getTime() + ".txt");      
+         }
       }
+      System.out.println();
+      System.out.println(String.format("Terminated after %d steps", step));
+      if(trainingFactor <= 0) System.out.println("Training factor (lambda) reached 0");
+      if(step >= maxSteps) System.out.println(String.format("Steps passed limit of %d", maxSteps));
+      if(error <= minError) System.out.println(String.format("Error fell below %f", minError));
+      System.out.println();
    }
 
    /*
     * improve changes the network's weights to decrease the total error. Modifies weights by the training 
     * factor (lambda) multiplied by the partial derivatives of total error.
-    * Adapts lambda by factors of 2 to ensure that it does not overstep
+    * Adapts lambda by factors of 2 to ensure that it does not overstep. Returns whether error was successfully improved.
     */
    public void improve() {
       double Dweights[][][] = getDTotalError();
@@ -93,8 +105,8 @@ public class NetworkTrainer
       network.weights.clone();
 
       double newWeights[][][] = new double[network.layers - 1][network.maxNodes][network.maxNodes];
-      double newError = 1 << 29;
-      while (newError > error)
+      double newError = (1 << 29);                                               // MAGIC NUMBER
+      while (newError >= error && trainingFactor > 0)
       {
          for (int n = 0; n < Dweights.length; n++) {                             // create new set of test weights
             for (int i = 0; i < Dweights[0].length; i++) {
@@ -109,6 +121,7 @@ public class NetworkTrainer
          if (newError < error) trainingFactor *= 2;
          else trainingFactor /= 2;
       }
+
       if(newError < error) 
       {
          error = newError;
@@ -117,7 +130,6 @@ public class NetworkTrainer
       {
          network.setWeights(oldWeights);
       }
-      System.out.println(trainingFactor + " " + error);
       return;
    }
 
@@ -126,6 +138,7 @@ public class NetworkTrainer
     */
    public void printTest() 
    {
+      System.out.println();
       // Evaluate the network for all test cases
       for (int i = 0; i < testInputs.length; i++) 
       {
@@ -155,6 +168,7 @@ public class NetworkTrainer
 
          System.out.println();
       }
+      System.out.println(String.format("Lambda: %f", trainingFactor));
       System.out.println(String.format("Total Error: %.15f", error));
       System.out.println();
    }

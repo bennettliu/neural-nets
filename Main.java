@@ -67,9 +67,9 @@ public class Main {
 
       if (hiddenLayers == 1)
       {
-         trainer.train(100000, 0.001);          // Train the network
+         trainer.train(10000000, 0.0000001, 500000);        // Train the network
 
-         trainer.printTest();                   // Evaluate the final network for all test cases
+         trainer.printTest();                               // Evaluate the final network for all test cases
          network = trainer.getNetwork();
          network.exportNet("endPoint.txt");
       }
