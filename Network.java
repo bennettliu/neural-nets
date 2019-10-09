@@ -63,9 +63,12 @@ public class Network
 
       // initialize all weights as random
       Random random = new Random();
-      for (int n = 0; n < layers - 1; n++) {
-         for (int i = 0; i < nodesInLayer[n]; i++) {
-            for (int j = 0; j < nodesInLayer[n + 1]; j++) {
+      for (int n = 0; n < layers - 1; n++) 
+      {
+         for (int i = 0; i < nodesInLayer[n]; i++) 
+         {
+            for (int j = 0; j < nodesInLayer[n + 1]; j++) 
+            {
                weights[n][i][j] = minWeight + (maxWeight - minWeight) * random.nextDouble();
             }
          }
@@ -149,7 +152,8 @@ public class Network
     * getDErrors returns the partial derivative of the total error of each output of a given test case 
     * relative to each weight.
     */
-   public double[][][] getDErrors(double testcase[], double[] truths) {
+   public double[][][] getDErrors(double testcase[], double[] truths) 
+   {
       // this might initialize hella random vals but we'll see ig
       double Dweights[][][] = new double[weights.length][weights[0].length][weights[0][0].length];
       double[] results = eval(testcase);
@@ -164,7 +168,8 @@ public class Network
          }
 
          // first layer
-         for (int i = 0; i < nodesInLayer[0];i++) {
+         for (int i = 0; i < nodesInLayer[0];i++) 
+         {
             for (int j = 0; j < nodesInLayer[1]; j++)                   // for each node (row i) in layer n
             {
                double dp1 = dotProduct(1, j);
@@ -180,13 +185,15 @@ public class Network
    /*
     * exportNet writes the fundamental structure of the network to a given file.
     */
-   public void exportNet(String fileName) {
+   public void exportNet(String fileName) 
+   {
       try {
          FileWriter fw = new FileWriter(fileName);
          BufferedWriter writer = new BufferedWriter(fw);
          writer.append(String.format("layers: %d\n", layers));
          writer.append("nodesInLayer: ");
-         for (int i = 0; i < layers; i++) {
+         for (int i = 0; i < layers; i++) 
+         {
             writer.append(String.format("%d ", nodesInLayer[i]));
          }
          writer.append("\n");
@@ -194,9 +201,12 @@ public class Network
          writer.append(String.format("maxNodes: %d\n", maxNodes));
 
          writer.append("weights: \n");
-         for (int n = 0; n < layers - 1; n++) {
-            for (int i = 0; i < nodesInLayer[n]; i++) {
-               for (int j = 0; j < nodesInLayer[n + 1]; j++) {
+         for (int n = 0; n < layers - 1; n++) 
+         {
+            for (int i = 0; i < nodesInLayer[n]; i++) 
+            {
+               for (int j = 0; j < nodesInLayer[n + 1]; j++) 
+               {
                   writer.append(String.format("%15.8f ", weights[n][i][j]));
                }
                writer.append("\n");
@@ -205,7 +215,8 @@ public class Network
          }
 
          writer.close();
-      } catch (IOException e) {
+      } catch (IOException e) 
+      {
          e.printStackTrace();
       }
       return;
