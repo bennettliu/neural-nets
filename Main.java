@@ -58,20 +58,20 @@ public class Main {
       }
 
       // Create network
-      Network network = new Network(inputNodes, hiddenLayerNodes, outputNodes);
+      Network network = new Network(inputNodes, hiddenLayerNodes, outputNodes, 0, 0.5);
 
       // Initialize trainer and evaluate the initial network for all test cases
-      NetworkTrainer trainer = new NetworkTrainer(network, testInputs, testOutputs);
+      NetworkTrainer trainer = new NetworkTrainer(network, testInputs, testOutputs, 1);
       trainer.printTest();
-      network.exportNet("startPoint.txt");
+      network.exportNet("logs/startPoint.txt");
 
       if (hiddenLayers == 1)
       {
-         trainer.train(10000000, 0.0000001, 500000);        // Train the network
+         trainer.train(10000000, 0.0000001, 50000);         // Train the network
 
          trainer.printTest();                               // Evaluate the final network for all test cases
          network = trainer.getNetwork();
-         network.exportNet("endPoint.txt");
+         network.exportNet("logs/endPoint.txt");
       }
       else
       {

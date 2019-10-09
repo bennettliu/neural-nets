@@ -26,7 +26,7 @@ public class Network
    /*
     * The Network constructor creates a new Network, given the number of input nodes, nodes in each hidden layer, and output nodes.
     */
-   public Network(int inputNodes, int hiddenLayerNodes[], int outputNodes) 
+   public Network(int inputNodes, int hiddenLayerNodes[], int outputNodes, double minWeight, double maxWeight) 
    { 
       inputs = inputNodes;
       inputLayer = 0;                                 // input layer index is always 0
@@ -49,7 +49,7 @@ public class Network
       for (int i = 0; i < nodesInLayer.length; i++) maxNodes = Math.max(maxNodes, nodesInLayer[i]);
 
       // initialize weight and activation matrices
-      initWeights();
+      initWeights(minWeight, maxWeight);
       initActivationVals();
       return;
    }
@@ -57,18 +57,16 @@ public class Network
    /*
     * initWeights creates a new weight matrix and fills in weight values.
     */
-   void initWeights() 
+   void initWeights(double minWeight, double maxWeight) 
    {
       weights = new double[layers - 1][maxNodes][maxNodes];
 
       // initialize all weights as random
       Random random = new Random();
-      double rangeMin = 0;
-      double rangeMax = 1;
       for (int n = 0; n < layers - 1; n++) {
          for (int i = 0; i < nodesInLayer[n]; i++) {
             for (int j = 0; j < nodesInLayer[n + 1]; j++) {
-               weights[n][i][j] = rangeMin + (rangeMax - rangeMin) * random.nextDouble();
+               weights[n][i][j] = minWeight + (maxWeight - minWeight) * random.nextDouble();
             }
          }
       }
