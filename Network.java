@@ -205,7 +205,7 @@ public class Network
          for (int i = 0; i < nodesInLayer[1]; i++)
          {
             double dp = dotProduct(2, output);
-            Dweights[1][i][output] = -(results[output] - truths[output]) * dF(dp) * activationVals[1][i];
+            Dweights[1][i][output] = (results[output] - truths[output]) * dF(dp) * activationVals[1][i];
          }
 
          // Calculates partial derivatives of first layer
@@ -215,7 +215,7 @@ public class Network
             {
                double dp1 = dotProduct(1, j);
                double dp2 = dotProduct(2, output);
-               Dweights[0][i][j] = -(results[output] - truths[output]) * dF(dp1) * dF(dp2) * activationVals[0][i] * weights[1][j][output];
+               Dweights[0][i][j] = (results[output] - truths[output]) * dF(dp1) * dF(dp2) * activationVals[0][i] * weights[1][j][output];
             }
          }
       }

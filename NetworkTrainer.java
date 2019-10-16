@@ -120,7 +120,7 @@ public class NetworkTrainer
          {
             for (int j = 0; j < Dweights[0][0].length; j++) 
             {
-               newWeights[n][i][j] = oldWeights[n][i][j] + trainingFactor * Dweights[n][i][j];
+               newWeights[n][i][j] = oldWeights[n][i][j] - trainingFactor * Dweights[n][i][j];
             }
          }
       }
