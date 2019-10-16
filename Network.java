@@ -54,6 +54,54 @@ public class Network
       return;
    }
 
+   public Network(File file) 
+   {
+      try 
+      {
+         Scanner scanner = new Scanner(file);
+         layers = scanner.nextInt();
+
+         nodesInLayer = new int[layers];
+         for (int i = 0; i < layers; i++)
+         {
+            nodesInLayer[i] = scanner.nextInt();
+         }
+         inputLayer = 0;
+         outputLayer = layers - 1;
+
+         inputs = nodesInLayer[inputLayer];
+         outputs = nodesInLayer[layers - 1];
+         hiddenLayers = layers - 2;
+
+         // calculate the maximum number of nodes in any layer
+         maxNodes = 0;
+         for (int i = 0; i < nodesInLayer.length; i++) maxNodes = Math.max(maxNodes, nodesInLayer[i]);
+
+         // initialize weight and activation matrices
+         weights = new double[layers - 1][maxNodes][maxNodes];
+         for (int n = 0; n < layers - 1; n++) 
+         {
+            for (int i = 0; i < nodesInLayer[n]; i++) 
+            {
+               for (int j = 0; j < nodesInLayer[n + 1]; j++) 
+               {
+                  weights[n][i][j] = scanner.nextDouble();
+               }
+            }
+         }
+         initActivationVals();
+
+         while(scanner.hasNext())
+         {
+            System.out.println(scanner.next());
+         }
+      } catch (Exception e)
+      {
+         System.out.println(String.format("Exception: Network could not be intialized with file %s", file.getName()));
+      }
+      return;
+   }
+
    /*
     * initWeights creates a new weight matrix and fills in weight values.
     */
@@ -107,7 +155,7 @@ public class Network
     */
    public double dF(double x) 
    {
-      return thresholdF(x) * (1 - thresholdF(x));
+      return thresholdF(x) * (1.0 - thresholdF(x));
    }
    
    /*
@@ -190,28 +238,24 @@ public class Network
       try {
          FileWriter fw = new FileWriter(fileName);
          BufferedWriter writer = new BufferedWriter(fw);
-         writer.append(String.format("layers: %d\n", layers));
-         writer.append("nodesInLayer: ");
+         writer.append(String.format("%d\n", layers));
          for (int i = 0; i < layers; i++) 
          {
             writer.append(String.format("%d ", nodesInLayer[i]));
          }
          writer.append("\n");
 
-         writer.append(String.format("maxNodes: %d\n", maxNodes));
-
-         writer.append("weights: \n");
          for (int n = 0; n < layers - 1; n++) 
          {
+            writer.append("\n");
             for (int i = 0; i < nodesInLayer[n]; i++) 
             {
                for (int j = 0; j < nodesInLayer[n + 1]; j++) 
                {
-                  writer.append(String.format("%15.8f ", weights[n][i][j]));
+                  writer.append(String.format("%.15f ", weights[n][i][j]));
                }
                writer.append("\n");
             }
-            writer.append("\n");
          }
 
          writer.close();
@@ -221,7 +265,7 @@ public class Network
       }
       return;
    }
-
+ 
    /*
     * setWeights changes the network's weights to a given set of weights 
     */

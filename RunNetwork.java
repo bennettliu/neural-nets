@@ -1,14 +1,12 @@
 /*
- * Authored by Bennett Liu on September 18th, 2019
- * 
- * The main class takes inputs defining the structure of the perceptron model, 
- * as found in Network.java and specifying a test set. It then trains the model, 
- * provided it has one hidden layer and one output node.
+ * Authored by Bennett Liu on October 15th, 2019
  */
 import java.util.*;
+import java.io.*;
 
-public class Main {
+public class RunNetwork {
    public static void main(String[] args) {
+      Network n = new Network(new File("logs/startPoint.txt"));
       // Network and test case parameters
       int inputNodes;                        // The number of inputs
       int hiddenLayers;                      // The number of hidden layers
@@ -17,7 +15,6 @@ public class Main {
       int testcases;                         // The number of test cases
       double testInputs[][];                 // The inputs for each test case
       double testOutputs[][];                // The outputs for each test case
-      
       double minWeight;
       double maxWeight;
       double trainingFactor;
@@ -32,40 +29,8 @@ public class Main {
       System.out.println("How many input nodes: ");
       inputNodes = in.nextInt();
 
-      System.out.println("How many hidden layers: ");
-      hiddenLayers = in.nextInt();
-
-      hiddenLayerNodes = new int[hiddenLayers];
-      for (int  i = 1; i <= hiddenLayers; i++) 
-      {
-         System.out.println(String.format("How many nodes in hidden layer %d: ", i));
-         hiddenLayerNodes[i - 1] = in.nextInt();
-      }
-
       System.out.println("How many output nodes: ");
       outputNodes = in.nextInt();
-
-      // Extra stuff
-      System.out.println("Minimum initial weight value: ");
-      minWeight = in.nextDouble();
-
-      System.out.println("Maximum initial weight value: ");
-      maxWeight = in.nextDouble();
-
-      System.out.println("Initial Training Factor (Lambda): ");
-      trainingFactor = in.nextDouble();
-
-      System.out.println("Adaptive Training Factor: ");
-      adaptFactor = in.nextDouble();
-
-      System.out.println("Training Step Limit: ");
-      stepLimit = in.nextInt();
-
-      System.out.println("Training Error Limit: ");
-      errorLimit = in.nextDouble();
-
-      System.out.println("Training Update Period: ");
-      savePeriod = in.nextInt();
 
       // Take testcase as inputs
       System.out.println("How many test cases: ");
@@ -89,25 +54,11 @@ public class Main {
       }
 
       // Create network
-      Network network = new Network(inputNodes, hiddenLayerNodes, outputNodes, minWeight, maxWeight);
+      Network network = new Network(new File("logs/endPoint.txt"));
 
       // Initialize trainer and evaluate the initial network for all test cases
       NetworkTrainer trainer = new NetworkTrainer(network, testInputs, testOutputs);
       trainer.printTest();
-      network.exportNet("logs/startPoint.txt");
-
-      if (hiddenLayers == 1)
-      {
-         trainer.train(trainingFactor, adaptFactor, stepLimit, errorLimit, savePeriod);            // Train the network
-
-         trainer.printTest();                               // Evaluate the final network for all test cases
-         network = trainer.getNetwork();
-         network.exportNet("logs/endPoint.txt");
-      }
-      else
-      {
-         System.out.println("Can't train for that case");
-      }
       return;
     }
  }

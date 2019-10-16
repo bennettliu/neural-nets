@@ -18,15 +18,13 @@ public class NetworkTrainer
    /*
     * The Network constructor creates a new Network, given the number of input nodes, nodes in each hidden layer, and output nodes.
     */
-   public NetworkTrainer(Network initialNetwork, double inputs[][], double[][] outputs, double initialLambda, double adaptiveConstant) 
+   public NetworkTrainer(Network initialNetwork, double inputs[][], double[][] outputs) 
    {
       // validation needed
       network = initialNetwork;
       testInputs = inputs;
       testOutputs = outputs;
       error = calcError();
-      trainingFactor = initialLambda;
-      adaptFactor = adaptiveConstant;
       return;
    }
 
@@ -53,8 +51,11 @@ public class NetworkTrainer
    /*
     * train runs multiple steps while some conditions are still met.
     */
-   public void train(int maxSteps, double minError, int savePeriod) 
+   public void train(double initialLambda, double adaptiveConstant, int maxSteps, double minError, int savePeriod) 
    {
+      trainingFactor = initialLambda;
+      adaptFactor = adaptiveConstant;
+
       int step = 0;
       boolean improved = true;
       while (step < maxSteps && error > minError && trainingFactor > 0 && (adaptFactor != 1 || improved))
@@ -72,7 +73,7 @@ public class NetworkTrainer
          else 
             trainingFactor /= adaptFactor;
 
-         if (step % savePeriod == 0)
+         if (savePeriod != 0 && step % savePeriod == 0)
          {
             printTest();
             network.exportNet("logs/" + (new Date()).getTime() + ".txt");      
