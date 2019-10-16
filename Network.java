@@ -2,7 +2,7 @@
  * Authored by Bennett Liu on September 18th, 2019
  * Network.java implements a multi-layer perceptron neural network customizable for any dimensions.
  */
-import java.util.*; 
+import java.util.*;
 import java.io.*;
 
 /*
@@ -10,15 +10,14 @@ import java.io.*;
  */
 public class Network 
 {
-   int inputs;                // The number of input nodes
-   int inputLayer;            // The index of the input layer
-   int hiddenLayers;          // The number of hidden layers
-   int outputs;               // The number of output nodes
-   int outputLayer;           // The index of the output layer
    int layers;                // The total number of layers
-                              
    int nodesInLayer[];        // The number of nodes per layer
    int maxNodes;              // The maximum number of nodes in a layer
+
+   int inputs;                // The number of input nodes
+   int inputLayer;            // The index of the input layer
+   int outputs;               // The number of output nodes
+   int outputLayer;           // The index of the output layer
 
    double weights[][][];      // Weight in weight layer m connecting left row to right row: [m][left][right]
    double activationVals[][]; // Value in model at layer n, row r: [n][r]
@@ -28,57 +27,51 @@ public class Network
     */
    public Network(int inputNodes, int hiddenLayerNodes[], int outputNodes, double minWeight, double maxWeight) 
    { 
-      inputs = inputNodes;
-      inputLayer = 0;                                 // input layer index is always 0
-      hiddenLayers = hiddenLayerNodes.length;
-      outputs = outputNodes;
-      outputLayer = hiddenLayers + 1;                 // output layer index
-      layers = hiddenLayers + 2;                      // total layers is hidden layers + input + output layers
+      layers = hiddenLayerNodes.length + 2;                    // Total layers is hidden layers + input + output layers
 
-      // create array of nodes in each layer
-      nodesInLayer = new int[layers];
+      inputLayer = 0;                                          // Input layer index is always 0
+      inputs = inputNodes;                                     // Get nodes in input layer
+      outputLayer = layers - 1;                                // Output layer index is always last index
+      outputs = outputNodes;                                   // Get nodes in output layer
+
+      nodesInLayer = new int[layers];                          // Create array of nodes in each layer
       nodesInLayer[inputLayer] = inputs;
-      for (int i = 1; i <= hiddenLayers; i++) 
+      for (int i = 1; i < layers - 1; i++) 
       {
          nodesInLayer[i] = hiddenLayerNodes[i - 1];
       }
       nodesInLayer[outputLayer] = outputs;
+      calcMaxNodes();                                          // Calculates the maximum nodes in each layer
 
-      // calculate the maximum number of nodes in any layer
-      maxNodes = 0;
-      for (int i = 0; i < nodesInLayer.length; i++) maxNodes = Math.max(maxNodes, nodesInLayer[i]);
-
-      // initialize weight and activation matrices
-      initWeights(minWeight, maxWeight);
-      initActivationVals();
+      initWeights(minWeight, maxWeight);                       // Initialize weights matrix
+      initActivationVals();                                    // Initialize activation matrix
       return;
    }
-
+   
+   /*
+    * The Network constructor creates a new Network, by loading it from a file describing its structure.
+    */
    public Network(File file) 
    {
       try 
       {
          Scanner scanner = new Scanner(file);
-         layers = scanner.nextInt();
 
-         nodesInLayer = new int[layers];
+         layers = scanner.nextInt();                              // Number of layers
+
+         nodesInLayer = new int[layers];                          // Parse the number of nodes in each layer
          for (int i = 0; i < layers; i++)
          {
             nodesInLayer[i] = scanner.nextInt();
          }
-         inputLayer = 0;
-         outputLayer = layers - 1;
+         calcMaxNodes();                                          // Calculates the maximum nodes in each layer
+         
+         inputLayer = 0;                                          // Input layer index is always 0
+         inputs = nodesInLayer[inputLayer];                       // Get nodes in input layer
+         outputLayer = layers - 1;                                // Output layer index is always last index
+         outputs = nodesInLayer[outputLayer];                     // Get nodes in output layer
 
-         inputs = nodesInLayer[inputLayer];
-         outputs = nodesInLayer[layers - 1];
-         hiddenLayers = layers - 2;
-
-         // calculate the maximum number of nodes in any layer
-         maxNodes = 0;
-         for (int i = 0; i < nodesInLayer.length; i++) maxNodes = Math.max(maxNodes, nodesInLayer[i]);
-
-         // initialize weight and activation matrices
-         weights = new double[layers - 1][maxNodes][maxNodes];
+         weights = new double[layers - 1][maxNodes][maxNodes];    // Initialize weights matrix
          for (int n = 0; n < layers - 1; n++) 
          {
             for (int i = 0; i < nodesInLayer[n]; i++) 
@@ -89,16 +82,23 @@ public class Network
                }
             }
          }
-         initActivationVals();
 
-         while(scanner.hasNext())
-         {
-            System.out.println(scanner.next());
-         }
+         initActivationVals();                                    // Initialize activation matrix
+         scanner.close();
       } catch (Exception e)
       {
          System.out.println(String.format("Exception: Network could not be intialized with file %s", file.getName()));
       }
+      return;
+   }
+   
+   /*
+    * calcMaxNodes calculates the maximum nodes in each layer
+    */
+   private void calcMaxNodes()
+   {
+      maxNodes = 0;
+      for (int i = 0; i < nodesInLayer.length; i++) maxNodes = Math.max(maxNodes, nodesInLayer[i]);
       return;
    }
 
@@ -109,8 +109,7 @@ public class Network
    {
       weights = new double[layers - 1][maxNodes][maxNodes];
 
-      // initialize all weights as random
-      Random random = new Random();
+      Random random = new Random();                            // initialize all weights as random
       for (int n = 0; n < layers - 1; n++) 
       {
          for (int i = 0; i < nodesInLayer[n]; i++) 
@@ -138,7 +137,8 @@ public class Network
     */
    void loadTestcase(double testcase[]) 
    {
-      for (int i = 0; i < inputs; i++) activationVals[inputLayer][i] = testcase[i];
+      for (int i = 0; i < inputs; i++) 
+         activationVals[inputLayer][i] = testcase[i];
       return;
    }
 
@@ -163,16 +163,11 @@ public class Network
     */
    double dotProduct(int n, int i)
    {
-      // m: weight layer index connecting layer n - 1 to n, given by m = n - 1 
-      int m = n - 1;
+      int m = n - 1;                                  // m is the weight index connecting layer n - 1 to n, given by m = n - 1 
+      double dotProduct = 0;
 
-      // Calculate dot product of activationVals[n-1][] and weights[m][][i]
-      double dotProduct = 0;                                          
-      for (int j = 0; j < nodesInLayer[n - 1]; j++)
-      {
-         // System.out.printf(String.format("a[%d][%d]w[%d][%d][%d] +", n-1, j, m, j, i));
+      for (int j = 0; j < nodesInLayer[n - 1]; j++)   // Calculates dot product of activationVals[n-1][] and weights[m][][i]
          dotProduct += activationVals[n - 1][j] * weights[m][j][i];
-      }
 
       return dotProduct;
    }
@@ -184,16 +179,15 @@ public class Network
    {
       loadTestcase(testcase);
 
-      // evaluate network
-      for (int n = 1; n <= outputLayer; n++)                         // for each non-input layer
+      for (int n = 1; n <= outputLayer; n++)                                  // For each non-input layer n
       {
-         for (int i = 0; i < nodesInLayer[n]; i++)                   // for each node (row i) in layer n
+         for (int i = 0; i < nodesInLayer[n]; i++)                            // For each node i in layer n
          {
-            activationVals[n][i] = thresholdF(dotProduct(n, i));     // Calculate activation value
+            activationVals[n][i] = thresholdF(dotProduct(n, i));              // Calculate activation value
          }
       }
       
-      return Arrays.copyOfRange(activationVals[outputLayer], 0, outputs);     // return output value
+      return Arrays.copyOfRange(activationVals[outputLayer], 0, outputs);     // Return output values
    }
 
    /*
@@ -202,23 +196,22 @@ public class Network
     */
    public double[][][] getDErrors(double testcase[], double[] truths) 
    {
-      // this might initialize hella random vals but we'll see ig
       double Dweights[][][] = new double[weights.length][weights[0].length][weights[0][0].length];
       double[] results = eval(testcase);
       
       for (int output = 0; output < truths.length; output++)
       {
-         // second layer
-         for (int i = 0; i < nodesInLayer[1]; i++)                   // for each node (row i) in layer n
+         // Calculates partial derivatives of second layer
+         for (int i = 0; i < nodesInLayer[1]; i++)
          {
             double dp = dotProduct(2, output);
-            Dweights[1][i][output] += -(results[output] - truths[output]) * dF(dp) * activationVals[1][i];
+            Dweights[1][i][output] = -(results[output] - truths[output]) * dF(dp) * activationVals[1][i];
          }
 
-         // first layer
+         // Calculates partial derivatives of first layer
          for (int i = 0; i < nodesInLayer[0];i++) 
          {
-            for (int j = 0; j < nodesInLayer[1]; j++)                   // for each node (row i) in layer n
+            for (int j = 0; j < nodesInLayer[1]; j++)
             {
                double dp1 = dotProduct(1, j);
                double dp2 = dotProduct(2, output);
@@ -238,21 +231,21 @@ public class Network
       try {
          FileWriter fw = new FileWriter(fileName);
          BufferedWriter writer = new BufferedWriter(fw);
-         writer.append(String.format("%d\n", layers));
-         for (int i = 0; i < layers; i++) 
-         {
+
+         writer.append(String.format("%d\n", layers));                           // Print number of layers
+
+         for (int i = 0; i < layers; i++)                                        // Print nodes per layer
             writer.append(String.format("%d ", nodesInLayer[i]));
-         }
          writer.append("\n");
 
-         for (int n = 0; n < layers - 1; n++) 
+         for (int m = 0; m < layers - 1; m++)                                    // Print all weights
          {
             writer.append("\n");
-            for (int i = 0; i < nodesInLayer[n]; i++) 
+            for (int i = 0; i < nodesInLayer[m]; i++)                            // Prints weights connecting layer m - 1 to m
             {
-               for (int j = 0; j < nodesInLayer[n + 1]; j++) 
+               for (int j = 0; j < nodesInLayer[m + 1]; j++) 
                {
-                  writer.append(String.format("%.15f ", weights[n][i][j]));
+                  writer.append(String.format("%.15f ", weights[m][i][j]));
                }
                writer.append("\n");
             }
