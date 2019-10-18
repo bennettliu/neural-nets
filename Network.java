@@ -65,7 +65,7 @@ public class Network
       initActivationVals();                                    // Initialize activation matrix
 
       return;
-   }
+   }  // public Network(int inputNodes, int hiddenLayerNodes[], int outputNodes, double minWeight, double maxWeight)
    
    /*
     * The Network constructor loads a Network from a file describing its structure.
@@ -110,13 +110,13 @@ public class Network
       }
 
       return;
-   }
+   }  // public Network(File file)
    
    /*
     * exportNet writes the fundamental structure of the network to a given file. This includes the number 
     * of layers, nodes in each layer and weights.
     */
-    public void exportNet(String fileName) 
+    public void exportNet(String fileName)
     {
       try {
          FileWriter fw = new FileWriter(fileName);
@@ -139,7 +139,7 @@ public class Network
                }
                writer.append("\n");
             }
-         }
+         }  // for (int m = 0; m < (layers - 1); m++)  
 
          writer.close();
       } 
@@ -149,7 +149,7 @@ public class Network
       }
 
       return;
-    }
+    } // public void exportNet(String fileName)
 
    /*
     * calcMaxNodes calculates the maximum nodes in each layer and updates the related instance variable.
@@ -157,7 +157,9 @@ public class Network
    private void calcMaxNodes()
    {
       maxNodes = 0;
-      for (int i = 0; i < nodesInLayer.length; i++) maxNodes = Math.max(maxNodes, nodesInLayer[i]);
+      for (int i = 0; i < nodesInLayer.length; i++) 
+         maxNodes = Math.max(maxNodes, nodesInLayer[i]);
+      
       return;
    }
 
@@ -181,7 +183,7 @@ public class Network
       }
 
       return;
-   }
+   }  // private void initRandomizedWeights(double minWeight, double maxWeight) 
 
    /*
     * initActivationVals creates a new activation values matrix.
@@ -248,7 +250,7 @@ public class Network
       }
       
       return Arrays.copyOfRange(activationVals[outputLayer], 0, outputs);     // Return output values
-   }
+   }  // public double[] eval(double trainingCase[]) 
 
    /*
     * getDErrors returns the partial derivative of the total error of each output of a given training case 
@@ -275,10 +277,10 @@ public class Network
                Dweights[0][i][j] = (results[output] - truths[output]) * dThresholdF(dp2) * dThresholdF(dp1) * activationVals[0][i] * weights[1][j][output];
             }
          }
-      }
+      }  // for (int output = 0; output < truths.length; output++)
       
       return Dweights;
-   }
+   }  // public double[][][] getDErrors(double trainingCase[], double[] truths) 
  
    /*
     * setWeights changes the network's weights to a given set of weights 
@@ -288,4 +290,4 @@ public class Network
       weights = newWeights;
       return;
    }
-};
+}  // public class Network 

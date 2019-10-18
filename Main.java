@@ -91,7 +91,7 @@ public class Main {
             System.out.println(String.format("Output %d:", j));
             trainingOutputs[i - 1][j - 1] = in.nextDouble();
          }
-      }
+      }  // for (int i = 1; i <= trainingCases; i++)
 
       // Create network with given parameters
       Network network = new Network(inputNodes, hiddenLayerNodes, outputNodes, minWeight, maxWeight);    
@@ -133,7 +133,7 @@ public class Main {
 
          trainer.printResults();                            // Evaluate the final network for all training cases
          network = trainer.getNetwork();                    // Retrieve trained network
-      }
+      }  // if (hiddenLayers == 1)
       else
       {
          System.out.println("Can only train for networks with one hidden layer.");
@@ -145,6 +145,7 @@ public class Main {
       network.exportNet(outputFileName);
       
       in.close();          // Close scanner
+
       return;
-    }
- }
+    } // public static void main(String[] args)
+ } // public class Main

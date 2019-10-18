@@ -25,7 +25,7 @@ public class RunNetwork {
 
       inputNodes = network.inputs;
       outputNodes = network.outputs;
-      
+
       /*
        * Read test case inputs, namely:
        * 
@@ -51,7 +51,7 @@ public class RunNetwork {
             System.out.println(String.format("Output %d:", j));
             testOutputs[i - 1][j - 1] = in.nextDouble();
          }
-      }
+      }  // for (int i = 1; i <= testCases; i++)
 
       // Initialize trainer and evaluate the initial network for all test cases
       NetworkTrainer trainer = new NetworkTrainer(network, testInputs, testOutputs);
@@ -60,5 +60,5 @@ public class RunNetwork {
       in.close();          // Close scanner
 
       return;
-    }
- }
+    } // public static void main(String[] args)
+ } // public class RunNetwork

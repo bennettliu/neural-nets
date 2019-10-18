@@ -55,7 +55,7 @@ public class NetworkTrainer
       totalError /= 2;                                               // This halving of error is specified in design doc 1.
 
       return totalError;
-   }
+   }  // private double calcError() 
 
    /*
     * train runs multiple steps while some conditions are still met.
@@ -71,14 +71,14 @@ public class NetworkTrainer
       {
          step++;
 
-         improved = adaptiveImprove();
+         improved = adaptiveImprove();                                        // Run an adaptive step and save the result
 
          if ((savePeriod != 0) && ((step % savePeriod) == 0))                 // Saves and prints output every savePeriod steps
          {
             printResults();
             network.exportNet("logs/" + (new Date()).getTime() + ".txt");
          }
-      }
+      }  // while ((step < maxSteps) && (error >= minError) && (trainingFactor >= minTrainingFactor) && (adaptFactor != 1 || improved))
 
       System.out.println();                                             // Print the reason(s) for termination
       System.out.println(String.format("Terminated after %d steps", step));
@@ -91,7 +91,7 @@ public class NetworkTrainer
       if (trainingFactor < minTrainingFactor) 
          System.out.println(String.format("Training factor (lambda) fell below %.15f", minTrainingFactor));
       System.out.println();
-   }
+   }  // public void train(double initialLambda, double adaptiveConstant, int maxSteps, double minError, double minTrainingFactor, int savePeriod) 
 
    /*
     * adaptiveImprove runs a single adaptive training step for each training case. It saves initial weights 
@@ -133,7 +133,7 @@ public class NetworkTrainer
       }
 
       return improved;                       // Return whether the error improved
-   }
+   }  // private boolean adaptiveImprove()
 
    /*
     * improve decreases the network's weights by the training factor (lambda) multiplied by the partial derivatives 
@@ -157,7 +157,7 @@ public class NetworkTrainer
       network.setWeights(newWeights);
 
       return;
-   }
+   }  // private void improve(int trainingCase) 
 
    /*
     * printResults prints the network's results for each input-output pair, the training factor, and total error.
@@ -192,11 +192,14 @@ public class NetworkTrainer
          System.out.println();
 
          System.out.println();
-      }
+      }  // for (int i = 0; i < trainingInputs.length; i++)
+
       System.out.println(String.format("Lambda: %.15f", trainingFactor));  // Print the training factor
       System.out.println(String.format("Total Error: %.15f", error));      // Print the total error
       System.out.println();
-   }
+
+      return;
+   }  // public void printResults()
 
    /*
     * getNetwork returns the current network.
@@ -205,4 +208,4 @@ public class NetworkTrainer
    {
       return network;
    }
-};
+}  // public class NetworkTrainer
