@@ -87,8 +87,10 @@ public class NetworkTrainer
    public boolean adaptiveImprove()
    {
       boolean improved;
+      double newError;
       double oldWeights[][][] = new double[network.layers - 1][network.maxNodes][network.maxNodes];
-      for (int n = 0; n < network.weights.length; n++) 
+
+      for (int n = 0; n < network.weights.length; n++)                  // Save old weights in case of roll back
       {
          for (int i = 0; i < network.weights[0].length; i++) 
          {
@@ -99,23 +101,24 @@ public class NetworkTrainer
          }
       }
 
-      for (int testcase = 0; testcase < testInputs.length; testcase++)
+      for (int testcase = 0; testcase < testInputs.length; testcase++)  // Improve for each test case
          improve(testcase);
          
-      double newError = calcError();
-      if (newError < error) 
+      newError = calcError();                // Calculate the new error
+      if (newError < error)                  // If steps improved error
       {
-         error = newError;
-         trainingFactor *= adaptFactor;
+         error = newError;                   // Update error
+         trainingFactor *= adaptFactor;      // Make a bigger step next time
          improved = true;
       }
-      else 
+      else                                   // If steps worsened error
       {
-         network.setWeights(oldWeights);
-         trainingFactor /= adaptFactor;
+         network.setWeights(oldWeights);     // Roll back weights
+         trainingFactor /= adaptFactor;      // Make a smaller step next time
          improved = false;
       }
-      return improved;
+
+      return improved;                       // Return whether the error improved
    }
 
    /*
@@ -125,8 +128,9 @@ public class NetworkTrainer
     */
    public void improve(int testcase) 
    {
-      double newWeights[][][] = new double[network.layers - 1][network.maxNodes][network.maxNodes];
       double Dweights[][][] = network.getDErrors(testInputs[testcase], testOutputs[testcase]);
+
+      double newWeights[][][] = new double[network.layers - 1][network.maxNodes][network.maxNodes];
       for (int n = 0; n < Dweights.length; n++) 
       {
          for (int i = 0; i < Dweights[0].length; i++) 
@@ -148,19 +152,18 @@ public class NetworkTrainer
    public void printTest() 
    {
       System.out.println();
-      // Evaluate the network for all test cases
-      for (int i = 0; i < testInputs.length; i++) 
+      for (int i = 0; i < testInputs.length; i++)                          // For each test case
       {
-         System.out.println(String.format("Case %d:", i + 1));
+         System.out.println(String.format("Case %d:", i + 1));             // Print the number
 
-         System.out.print("Inputs:");
+         System.out.print("Inputs:");                                      // Print the inputs
          for (int j = 0; j < testInputs[0].length; j++)
          {
             System.out.print(String.format(" %.15f", testInputs[i][j]));
          }
          System.out.println();
 
-         System.out.print("Results:");
+         System.out.print("Results:");                                     // Calculate and print the network's outputs
          double results[] = network.eval(testInputs[i]);
          for (int j = 0; j < results.length; j++)
          {
@@ -168,7 +171,7 @@ public class NetworkTrainer
          }
          System.out.println();
 
-         System.out.print("Answers:");
+         System.out.print("Answers:");                                     // Calculate and print the correct outputs
          for (int j = 0; j < testOutputs[0].length; j++)
          {
             System.out.print(String.format(" %.15f", testOutputs[i][j]));
@@ -177,8 +180,8 @@ public class NetworkTrainer
 
          System.out.println();
       }
-      System.out.println(String.format("Lambda: %.15f", trainingFactor));
-      System.out.println(String.format("Total Error: %.15f", error));
+      System.out.println(String.format("Lambda: %.15f", trainingFactor));  // Print the training factor
+      System.out.println(String.format("Total Error: %.15f", error));      // Print the total error
       System.out.println();
    }
 
