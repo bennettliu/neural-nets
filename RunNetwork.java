@@ -9,20 +9,10 @@ public class RunNetwork {
       Network n = new Network(new File("logs/startPoint.txt"));
       // Network and test case parameters
       int inputNodes;                        // The number of inputs
-      int hiddenLayers;                      // The number of hidden layers
-      int hiddenLayerNodes[];                // How many nodes are in each layer
       int outputNodes;                       // The number of outputs
       int testcases;                         // The number of test cases
       double testInputs[][];                 // The inputs for each test case
       double testOutputs[][];                // The outputs for each test case
-      double minWeight;
-      double maxWeight;
-      double trainingFactor;
-      double adaptFactor;
-
-      int stepLimit;
-      double errorLimit;
-      int savePeriod;
 
       // Take network inputs
       Scanner in = new Scanner(System.in);      
