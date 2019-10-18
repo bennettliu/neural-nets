@@ -1,20 +1,27 @@
 /*
  * Authored by Bennett Liu on October 15th, 2019
+ * The RunNetwork contains a main function imports a Network from a file, containing an exported Network. 
+ * It then takes in test cases, which are run on the imported Network.
  */
+
 import java.util.*;
 import java.io.*;
 
 public class RunNetwork {
    public static void main(String[] args) {
-      Network n = new Network(new File("logs/startPoint.txt"));
       // Network and test case parameters
       int inputNodes;                        // The number of inputs
       int outputNodes;                       // The number of outputs
-      int testcases;                         // The number of test cases
+      int testCases;                         // The number of test cases
       double testInputs[][];                 // The inputs for each test case
       double testOutputs[][];                // The outputs for each test case
 
-      // Take network inputs
+      /*
+       * Read network inputs, namely:
+       * 
+       * The number of input nodes
+       * The number of output nodes
+       */
       Scanner in = new Scanner(System.in);      
       System.out.println("How many input nodes: ");
       inputNodes = in.nextInt();
@@ -22,13 +29,19 @@ public class RunNetwork {
       System.out.println("How many output nodes: ");
       outputNodes = in.nextInt();
 
-      // Take testcase as inputs
+      /*
+       * Read test case inputs, namely:
+       * 
+       * The number of test cases
+       * Each test case's inputs
+       * Each test case's outputs
+       */
       System.out.println("How many test cases: ");
-      testcases = in.nextInt();
+      testCases = in.nextInt();
 
-      testInputs = new double[testcases][inputNodes];
-      testOutputs = new double[testcases][outputNodes];
-      for (int i = 1; i <= testcases; i++) 
+      testInputs = new double[testCases][inputNodes];
+      testOutputs = new double[testCases][outputNodes];
+      for (int i = 1; i <= testCases; i++) 
       {
          System.out.println(String.format("Test Case %d", i));
          for (int j = 1; j <= inputNodes; j++)
@@ -48,7 +61,10 @@ public class RunNetwork {
 
       // Initialize trainer and evaluate the initial network for all test cases
       NetworkTrainer trainer = new NetworkTrainer(network, testInputs, testOutputs);
-      trainer.printTest();
+      trainer.printResults();
+
+      in.close();          // Close scanner
+
       return;
     }
  }

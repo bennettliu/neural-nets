@@ -1,6 +1,24 @@
 /*
  * Authored by Bennett Liu on September 18th, 2019
- * Network.java implements a multi-layer perceptron neural network customizable for any dimensions.
+ * Network.java implements a multi-layer feed-forward perceptron neural network customizable for any positive number 
+ * of layers and nodes.
+ * 
+ * Contains the following methods:
+ * 
+ * Method                  Description
+ * Network                 A constructor for creating a Network with randomized weights.
+ * Network                 A constructor for loading a Network from a file.
+ * exportNet               Exports the Network to a specified file.
+ * calcMaxNodes            Calculates the most nodes a layer has.
+ * initRandomizedWeights   Randomly initializes the weights matrix, given bounds.
+ * initActivationVals      Creates the activations matrix.
+ * loadTrainingCase        Loads a given training case into the input activations.
+ * thresholdF              The threshold function applied to a node's input values.
+ * dThresholdF             The derivative of the threshold function.
+ * dotProduct              Calculates the dot product for node (n, i)'s input values.
+ * eval                    Evaluates the network, given a training case.
+ * getDErrors              Finds the partial derivatives relative to the weights of a given case's total error.
+ * setWeights              Sets the weights to a given matrix.
  */
 import java.util.*;
 import java.io.*;
@@ -23,7 +41,8 @@ public class Network
    double activationVals[][]; // Value in model at layer n, row r: [n][r]
 
    /*
-    * The Network constructor creates a new Network, given the number of input nodes, nodes in each hidden layer, and output nodes.
+    * The Network constructor creates a new Network with randomized weights, given the number of input nodes, 
+    * nodes in each hidden layer, output nodes, and the bounds of randomization.
     */
    public Network(int inputNodes, int hiddenLayerNodes[], int outputNodes, double minWeight, double maxWeight) 
    { 
@@ -34,22 +53,22 @@ public class Network
       outputLayer = layers - 1;                                // Output layer index is always last index
       outputs = outputNodes;                                   // Get nodes in output layer
 
-      nodesInLayer = new int[layers];                          // Create array of nodes in each layer
+      nodesInLayer = new int[layers];                          // Create nodesInLayer, the number of nodes in each layer
       nodesInLayer[inputLayer] = inputs;
       for (int i = 1; i < layers - 1; i++) 
-      {
          nodesInLayer[i] = hiddenLayerNodes[i - 1];
-      }
       nodesInLayer[outputLayer] = outputs;
+
       calcMaxNodes();                                          // Calculates the maximum nodes in each layer
 
-      initWeights(minWeight, maxWeight);                       // Initialize weights matrix
+      initRandomizedWeights(minWeight, maxWeight);             // Initialize weights matrix
       initActivationVals();                                    // Initialize activation matrix
+
       return;
    }
    
    /*
-    * The Network constructor creates a new Network, by loading it from a file describing its structure.
+    * The Network constructor loads a Network from a file describing its structure.
     */
    public Network(File file) 
    {
@@ -64,12 +83,13 @@ public class Network
          {
             nodesInLayer[i] = scanner.nextInt();
          }
-         calcMaxNodes();                                          // Calculates the maximum nodes in each layer
          
          inputLayer = 0;                                          // Input layer index is always 0
          inputs = nodesInLayer[inputLayer];                       // Get nodes in input layer
          outputLayer = layers - 1;                                // Output layer index is always last index
          outputs = nodesInLayer[outputLayer];                     // Get nodes in output layer
+
+         calcMaxNodes();                                          // Calculates the maximum nodes in each layer
 
          weights = new double[layers - 1][maxNodes][maxNodes];    // Initialize weights matrix
          for (int n = 0; n < layers - 1; n++) 
@@ -85,149 +105,21 @@ public class Network
 
          initActivationVals();                                    // Initialize activation matrix
          scanner.close();
-      } catch (Exception e)
+      } 
+      catch (Exception e)
       {
          System.out.println(String.format("Exception: Network could not be intialized with file %s", file.getName()));
       }
+
       return;
    }
    
    /*
-    * calcMaxNodes calculates the maximum nodes in each layer
+    * exportNet writes the fundamental structure of the network to a given file. This includes the number 
+    * of layers, nodes in each layer and weights.
     */
-   private void calcMaxNodes()
-   {
-      maxNodes = 0;
-      for (int i = 0; i < nodesInLayer.length; i++) maxNodes = Math.max(maxNodes, nodesInLayer[i]);
-      return;
-   }
-
-   /*
-    * initWeights creates a new weight matrix and fills in weight values.
-    */
-   void initWeights(double minWeight, double maxWeight) 
-   {
-      weights = new double[layers - 1][maxNodes][maxNodes];
-
-      Random random = new Random();                            // initialize all weights as random
-      for (int n = 0; n < layers - 1; n++) 
-      {
-         for (int i = 0; i < nodesInLayer[n]; i++) 
-         {
-            for (int j = 0; j < nodesInLayer[n + 1]; j++) 
-            {
-               weights[n][i][j] = minWeight + (maxWeight - minWeight) * random.nextDouble();
-            }
-         }
-      }
-      return;
-   }
-
-   /*
-    * initActivationVals creates a new activation values matrix
-    */
-   void initActivationVals() 
-   {
-      activationVals = new double[layers][maxNodes];
-      return;
-   }
-
-   /*
-    * loadTestcase initializes the input nodes' activations, given a testcase
-    */
-   void loadTestcase(double testcase[]) 
-   {
-      for (int i = 0; i < inputs; i++) 
-         activationVals[inputLayer][i] = testcase[i];
-      return;
-   }
-
-   /*
-    * thresholdF returns the result of the threshold function used to determine a node's activation state. 
-    */
-   public double thresholdF(double x) 
-   {
-      return 1.0 / (1.0 + Math.exp(-x));
-   }
-
-   /*
-    * dF returns the derivative of the function thresholdF
-    */
-   public double dF(double x) 
-   {
-      return thresholdF(x) * (1.0 - thresholdF(x));
-   }
-   
-   /*
-    * dotProduct calculates the dot product of node (n, i)'s input activation values and weights, given n and i
-    */
-   double dotProduct(int n, int i)
-   {
-      int m = n - 1;                                  // m is the weight index connecting layer n - 1 to n, given by m = n - 1 
-      double dotProduct = 0;
-
-      for (int j = 0; j < nodesInLayer[n - 1]; j++)   // Calculates dot product of activationVals[n-1][] and weights[m][][i]
-         dotProduct += activationVals[n - 1][j] * weights[m][j][i];
-
-      return dotProduct;
-   }
-
-   /*
-    * eval evaluates and returns the output of the network, given a test case
-    */
-   public double[] eval(double testcase[]) 
-   {
-      loadTestcase(testcase);
-
-      for (int n = 1; n <= outputLayer; n++)                                  // For each non-input layer n
-      {
-         for (int i = 0; i < nodesInLayer[n]; i++)                            // For each node i in layer n
-         {
-            activationVals[n][i] = thresholdF(dotProduct(n, i));              // Calculate activation value
-         }
-      }
-      
-      return Arrays.copyOfRange(activationVals[outputLayer], 0, outputs);     // Return output values
-   }
-
-   /*
-    * getDErrors returns the partial derivative of the total error of each output of a given test case 
-    * relative to each weight.
-    */
-   public double[][][] getDErrors(double testcase[], double[] truths) 
-   {
-      double Dweights[][][] = new double[weights.length][weights[0].length][weights[0][0].length];
-      double[] results = eval(testcase);
-      
-      for (int output = 0; output < truths.length; output++)
-      {
-         // Calculates partial derivatives of second layer
-         for (int i = 0; i < nodesInLayer[1]; i++)
-         {
-            double dp = dotProduct(2, output);
-            Dweights[1][i][output] = (results[output] - truths[output]) * dF(dp) * activationVals[1][i];
-         }
-
-         // Calculates partial derivatives of first layer
-         for (int i = 0; i < nodesInLayer[0];i++) 
-         {
-            for (int j = 0; j < nodesInLayer[1]; j++)
-            {
-               double dp1 = dotProduct(1, j);
-               double dp2 = dotProduct(2, output);
-               Dweights[0][i][j] = (results[output] - truths[output]) * dF(dp1) * dF(dp2) * activationVals[0][i] * weights[1][j][output];
-            }
-         }
-      }
-      
-      return Dweights;
-   }
-
-   /*
-    * exportNet writes the fundamental structure of the network to a given file.
-    */
-   public void exportNet(String fileName) 
-   {
+    public void exportNet(String fileName) 
+    {
       try {
          FileWriter fw = new FileWriter(fileName);
          BufferedWriter writer = new BufferedWriter(fw);
@@ -252,11 +144,142 @@ public class Network
          }
 
          writer.close();
-      } catch (IOException e) 
+      } 
+      catch (IOException e) 
       {
          e.printStackTrace();
       }
+
       return;
+    }
+
+   /*
+    * calcMaxNodes calculates the maximum nodes in each layer and updates the related instance variable.
+    */
+   private void calcMaxNodes()
+   {
+      maxNodes = 0;
+      for (int i = 0; i < nodesInLayer.length; i++) maxNodes = Math.max(maxNodes, nodesInLayer[i]);
+      return;
+   }
+
+   /*
+    * initRandomizedWeights creates a new weight matrix and fills in randomized weight values, given a range.
+    */
+   void initRandomizedWeights(double minWeight, double maxWeight) 
+   {
+      weights = new double[layers - 1][maxNodes][maxNodes];
+
+      Random random = new Random();                            // initialize all weights as random
+      for (int n = 0; n < layers - 1; n++) 
+      {
+         for (int i = 0; i < nodesInLayer[n]; i++) 
+         {
+            for (int j = 0; j < nodesInLayer[n + 1]; j++) 
+            {
+               weights[n][i][j] = minWeight + (maxWeight - minWeight) * random.nextDouble();
+            }
+         }
+      }
+
+      return;
+   }
+
+   /*
+    * initActivationVals creates a new activation values matrix.
+    */
+   void initActivationVals() 
+   {
+      activationVals = new double[layers][maxNodes];
+      return;
+   }
+
+   /*
+    * loadTrainingCase initializes the input nodes' activation values, given a training case.
+    */
+   void loadTrainingCase(double trainingCase[]) 
+   {
+      for (int i = 0; i < inputs; i++) 
+         activationVals[inputLayer][i] = trainingCase[i];
+      return;
+   }
+
+   /*
+    * thresholdF returns the result of the threshold function used to determine a node's activation state. 
+    */
+   public double thresholdF(double x) 
+   {
+      return 1.0 / (1.0 + Math.exp(-x));
+   }
+
+   /*
+    * dThresholdF returns the derivative of the function thresholdF
+    */
+   public double dThresholdF(double x) 
+   {
+      return thresholdF(x) * (1.0 - thresholdF(x));
+   }
+   
+   /*
+    * dotProduct calculates the dot product of node (n, i)'s input activation values and weights, given n and i.
+    */
+   double dotProduct(int n, int i)
+   {
+      int m = n - 1;                                  // m is the weight index connecting layer n - 1 to n, given by m = n - 1 
+      double dotProduct = 0;
+
+      for (int j = 0; j < nodesInLayer[n - 1]; j++)   // Calculates dot product of activationVals[n-1][] and weights[m][][i]
+         dotProduct += activationVals[n - 1][j] * weights[m][j][i];
+
+      return dotProduct;
+   }
+
+   /*
+    * eval evaluates and returns the output of the network, given a training case.
+    */
+   public double[] eval(double trainingCase[]) 
+   {
+      loadTrainingCase(trainingCase);
+
+      for (int n = 1; n <= outputLayer; n++)                                  // For each non-input layer n
+      {
+         for (int i = 0; i < nodesInLayer[n]; i++)                            // For each node i in layer n
+         {
+            activationVals[n][i] = thresholdF(dotProduct(n, i));              // Calculate activation value
+         }
+      }
+      
+      return Arrays.copyOfRange(activationVals[outputLayer], 0, outputs);     // Return output values
+   }
+
+   /*
+    * getDErrors returns the partial derivative of the total error of each output of a given training case 
+    * relative to each weight.
+    */
+   public double[][][] getDErrors(double trainingCase[], double[] truths) 
+   {
+      double Dweights[][][] = new double[weights.length][weights[0].length][weights[0][0].length];
+      double[] results = eval(trainingCase);
+      
+      for (int output = 0; output < truths.length; output++)
+      {
+         double dp1 = dotProduct(2, output);
+         for (int i = 0; i < nodesInLayer[1]; i++)          // Calculates partial derivatives of second layer
+         {
+            Dweights[1][i][output] = (results[output] - truths[output]) * dThresholdF(dp1) * activationVals[1][i];
+         }
+
+         for (int i = 0; i < nodesInLayer[0];i++)           // Calculates partial derivatives of first layer
+         {
+            for (int j = 0; j < nodesInLayer[1]; j++)
+            {
+               double dp2 = dotProduct(1, j);
+               Dweights[0][i][j] = (results[output] - truths[output]) * dThresholdF(dp2) * dThresholdF(dp1) * activationVals[0][i] * weights[1][j][output];
+            }
+         }
+      }
+      
+      return Dweights;
    }
  
    /*

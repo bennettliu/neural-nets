@@ -1,47 +1,56 @@
 /*
  * Authored by Bennett Liu on September 20th, 2019
- * NetworkTrainer.java defines a class which trains a feed-forward multi-layer neural network 
- * defined in Network.java on a training set
+ * NetworkTrainer.java implements a trainer of the feed-forward multi-layer perceptron network defined in Network.java. 
+ * Given a training set and training parameters, NetworkTrainer minimizes the error of the perceptron on the training set.
+ * 
+ * Contains the following methods:
+ * 
+ * Method                  Description
+ * NetworkTrainer          A constructor for creating a Network, given a network and a training set.
+ * calcError               Calculates the total error for the whole training set.
+ * train                   Runs training steps while certain conditions are met.
+ * adaptiveImprove         Runs adaptive training
+ * improve                 Makes a step for a given training case.
+ * printResults            Prints information on each training case.
+ * getNetwork              Returns the current network.
  */
 import java.util.*;
 
 public class NetworkTrainer
 {
    Network network;              // The network to be trained
-   double testInputs[][];
-   double testOutputs[][];
+   double trainingInputs[][];    // The inputs to be trained on
+   double trainingOutputs[][];   // The outputs to be trained on
 
-   double error;
+   double error;                 // The network's current error
    double trainingFactor;        // The training factor (lambda)
    double adaptFactor;           // The adaptive factor, used to modify lambda
 
    /*
-    * The Network constructor creates a new Network, given the number of input nodes, nodes in each hidden layer, and output nodes.
+    * The Network constructor creates a new NetworkTrainer, given a network and training inputs/outputs.
     */
    public NetworkTrainer(Network initialNetwork, double inputs[][], double[][] outputs) 
    {
-      // validation needed
       network = initialNetwork;
-      testInputs = inputs;
-      testOutputs = outputs;
+      trainingInputs = inputs;
+      trainingOutputs = outputs;
       error = calcError();
+
       return;
    }
 
    /*
-    * calcError returns the total error when the network is run for each input-output pair.
+    * calcError returns the total error when the network is run for all input-output pairs.
     */
    public double calcError() 
    {
       double totalError = 0;
-      for (int i = 0; i < testInputs.length; i++)
+      for (int i = 0; i < trainingInputs.length; i++)
       {
-         double[] results = network.eval(testInputs[i]);
+         double[] results = network.eval(trainingInputs[i]);         // Get results
 
-         for (int j = 0; j < results.length; j++)
-         {
-            totalError += (testOutputs[i][j] - results[j]) * (testOutputs[i][j] - results[j]);
-         }
+         for (int j = 0; j < results.length; j++)                    // Calculate error for given training case
+            totalError += (trainingOutputs[i][j] - results[j]) * (trainingOutputs[i][j] - results[j]);
       }
       totalError /= 2;
 
@@ -53,7 +62,7 @@ public class NetworkTrainer
     */
    public void train(double initialLambda, double adaptiveConstant, int maxSteps, double minError, int savePeriod) 
    {
-      trainingFactor = initialLambda;
+      trainingFactor = initialLambda;                                   // Set training factors
       adaptFactor = adaptiveConstant;
 
       int step = 0;
@@ -64,14 +73,14 @@ public class NetworkTrainer
 
          improved = adaptiveImprove();
 
-         if (savePeriod != 0 && step % savePeriod == 0)
+         if (savePeriod != 0 && step % savePeriod == 0)                 // Saves and prints output every savePeriod steps
          {
-            printTest();
+            printResults();
             network.exportNet("logs/" + (new Date()).getTime() + ".txt");      
          }
       }
 
-      System.out.println();
+      System.out.println();                                             // Print the reason(s) for termination
       System.out.println(String.format("Terminated after %d steps", step));
       if (step >= maxSteps) 
          System.out.println(String.format("Steps passed limit of %d", maxSteps));
@@ -84,6 +93,11 @@ public class NetworkTrainer
       System.out.println();
    }
 
+   /*
+    * adaptiveImprove runs a single adaptive training step for each training case. It saves initial weights 
+    * and attempts these steps simultaneously. If the step improves error, the training factor is increased, 
+    * otherwise the weights are rolled back and training factor is decreased. Returns whether error was improved.
+    */
    public boolean adaptiveImprove()
    {
       boolean improved;
@@ -101,8 +115,8 @@ public class NetworkTrainer
          }
       }
 
-      for (int testcase = 0; testcase < testInputs.length; testcase++)  // Improve for each test case
-         improve(testcase);
+      for (int trainingCase = 0; trainingCase < trainingInputs.length; trainingCase++)  // Improve for each training case
+         improve(trainingCase);
          
       newError = calcError();                // Calculate the new error
       if (newError < error)                  // If steps improved error
@@ -122,13 +136,12 @@ public class NetworkTrainer
    }
 
    /*
-    * improve changes the network's weights to decrease the total error. Modifies weights by the training 
-    * factor (lambda) multiplied by the partial derivatives of total error.
-    * Adapts lambda by factors of 2 to ensure that it does not overstep.
+    * improve decreases the network's weights by the training factor (lambda) multiplied by the partial derivatives 
+    * of total error.
     */
-   public void improve(int testcase) 
+   public void improve(int trainingCase) 
    {
-      double Dweights[][][] = network.getDErrors(testInputs[testcase], testOutputs[testcase]);
+      double Dweights[][][] = network.getDErrors(trainingInputs[trainingCase], trainingOutputs[trainingCase]);
 
       double newWeights[][][] = new double[network.layers - 1][network.maxNodes][network.maxNodes];
       for (int n = 0; n < Dweights.length; n++) 
@@ -147,24 +160,24 @@ public class NetworkTrainer
    }
 
    /*
-    * printTest prints the network's results for each input-output pair and other debug information.
+    * printResults prints the network's results for each input-output pair, the training factor, and total error.
     */
-   public void printTest() 
+   public void printResults() 
    {
       System.out.println();
-      for (int i = 0; i < testInputs.length; i++)                          // For each test case
+      for (int i = 0; i < trainingInputs.length; i++)                      // For each training case
       {
          System.out.println(String.format("Case %d:", i + 1));             // Print the number
 
          System.out.print("Inputs:");                                      // Print the inputs
-         for (int j = 0; j < testInputs[0].length; j++)
+         for (int j = 0; j < trainingInputs[0].length; j++)
          {
-            System.out.print(String.format(" %.15f", testInputs[i][j]));
+            System.out.print(String.format(" %.15f", trainingInputs[i][j]));
          }
          System.out.println();
 
          System.out.print("Results:");                                     // Calculate and print the network's outputs
-         double results[] = network.eval(testInputs[i]);
+         double results[] = network.eval(trainingInputs[i]);
          for (int j = 0; j < results.length; j++)
          {
             System.out.print(String.format(" %.15f", results[j]));
@@ -172,9 +185,9 @@ public class NetworkTrainer
          System.out.println();
 
          System.out.print("Answers:");                                     // Calculate and print the correct outputs
-         for (int j = 0; j < testOutputs[0].length; j++)
+         for (int j = 0; j < trainingOutputs[0].length; j++)
          {
-            System.out.print(String.format(" %.15f", testOutputs[i][j]));
+            System.out.print(String.format(" %.15f", trainingOutputs[i][j]));
          }
          System.out.println();
 
@@ -186,7 +199,7 @@ public class NetworkTrainer
    }
 
    /*
-    * getNetwork returns the trained network
+    * getNetwork returns the current network.
     */
    public Network getNetwork() 
    {
