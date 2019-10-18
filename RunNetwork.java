@@ -9,7 +9,6 @@ import java.io.*;
 
 public class RunNetwork {
    public static void main(String[] args) {
-      // Network and test case parameters
       int inputNodes;                        // The number of inputs
       int outputNodes;                       // The number of outputs
       int testCases;                         // The number of test cases

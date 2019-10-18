@@ -24,7 +24,7 @@ public class NetworkTrainer
 
    double error;                 // The network's current error
    double trainingFactor;        // The training factor (lambda)
-   double adaptFactor;           // The adaptive factor, used to modify lambda
+   double adaptConstant;         // The adaptive factor, used to modify lambda
 
    /*
     * The Network constructor creates a new NetworkTrainer, given a network and training inputs/outputs.
@@ -60,14 +60,14 @@ public class NetworkTrainer
    /*
     * train runs multiple steps while some conditions are still met.
     */
-   public void train(double initialLambda, double adaptiveConstant, int maxSteps, double minError, double minTrainingFactor, int savePeriod) 
+   public void train(double initLambda, double adaptConst, int maxSteps, double minError, double minLambda, int savePeriod)
    {
-      trainingFactor = initialLambda;                                   // Set training factors
-      adaptFactor = adaptiveConstant;
+      trainingFactor = initLambda;                                   // Set training factors
+      adaptConstant = adaptConst;
 
       int step = 0;
       boolean improved = true;
-      while ((step < maxSteps) && (error >= minError) && (trainingFactor >= minTrainingFactor) && (adaptFactor != 1 || improved))
+      while ((step < maxSteps) && (error >= minError) && (trainingFactor >= minLambda) && (adaptConstant != 1 || improved))
       {
          step++;
 
@@ -78,7 +78,7 @@ public class NetworkTrainer
             printResults();
             network.exportNet("logs/" + (new Date()).getTime() + ".txt");
          }
-      }  // while ((step < maxSteps) && (error >= minError) && (trainingFactor >= minTrainingFactor) && (adaptFactor != 1 || improved))
+      }  // while ((step < maxSteps) && (error >= minError) && (trainingFactor >= minLambda) && (adaptConstant != 1 || improved))
 
       System.out.println();                                             // Print the reason(s) for termination
       System.out.println(String.format("Terminated after %d steps", step));
@@ -86,12 +86,12 @@ public class NetworkTrainer
          System.out.println(String.format("Steps passed limit of %d", maxSteps));
       if (error < minError) 
          System.out.println(String.format("Error fell below %.15f", minError));
-      if (adaptFactor == 1 && !improved) 
+      if (adaptConstant == 1 && !improved) 
          System.out.println("Was not able to improve error.");
-      if (trainingFactor < minTrainingFactor) 
-         System.out.println(String.format("Training factor (lambda) fell below %.15f", minTrainingFactor));
+      if (trainingFactor < minLambda) 
+         System.out.println(String.format("Training factor (lambda) fell below %.15f", minLambda));
       System.out.println();
-   }  // public void train(double initialLambda, double adaptiveConstant, int maxSteps, double minError, double minTrainingFactor, int savePeriod) 
+   }  // public void train(double initLambda, double adaptConst, int maxSteps, double minError, double minLambda, int savePeriod)
 
    /*
     * adaptiveImprove runs a single adaptive training step for each training case. It saves initial weights 
@@ -122,13 +122,13 @@ public class NetworkTrainer
       if (newError < error)                  // If steps improved error
       {
          error = newError;                   // Update error
-         trainingFactor *= adaptFactor;      // Make a bigger step next time
+         trainingFactor *= adaptConstant;    // Make a bigger step next time
          improved = true;
       }
       else                                   // If steps worsened error
       {
          network.setWeights(oldWeights);     // Roll back weights
-         trainingFactor /= adaptFactor;      // Make a smaller step next time
+         trainingFactor /= adaptConstant;    // Make a smaller step next time
          improved = false;
       }
 

@@ -263,18 +263,19 @@ public class Network
       
       for (int output = 0; output < truths.length; output++)
       {
-         double dp1 = dotProduct(2, output);                // Sum of inputs into node (2, output). This is specified in course note 1.
+         double dp1 = dotProduct(2, output);                // Sum of inputs into node (2, output). Specified in course note 1.
+         double diff = (results[output] - truths[output]);
          for (int i = 0; i < nodesInLayer[1]; i++)          // Calculates partial derivatives of second layer
          {
-            Dweights[1][i][output] = (results[output] - truths[output]) * dThresholdF(dp1) * activationVals[1][i];
+            Dweights[1][i][output] = diff * dThresholdF(dp1) * activationVals[1][i];
          }
 
          for (int i = 0; i < nodesInLayer[0];i++)           // Calculates partial derivatives of first layer
          {
             for (int j = 0; j < nodesInLayer[1]; j++)
             {
-               double dp2 = dotProduct(1, j);               // Sum of inputs into node (1, j). This is specified in course note 1.
-               Dweights[0][i][j] = (results[output] - truths[output]) * dThresholdF(dp2) * dThresholdF(dp1) * activationVals[0][i] * weights[1][j][output];
+               double dp2 = dotProduct(1, j);               // Sum of inputs into node (1, j). Specified in course note 1.
+               Dweights[0][i][j] = diff * dThresholdF(dp2) * dThresholdF(dp1) * activationVals[0][i] * weights[1][j][output];
             }
          }
       }  // for (int output = 0; output < truths.length; output++)
