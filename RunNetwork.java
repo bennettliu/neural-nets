@@ -1,5 +1,6 @@
 /*
  * Authored by Bennett Liu on October 15th, 2019
+ * 
  * The RunNetwork contains a main function imports a Network from a file, containing an exported Network. 
  * It then takes in test cases, which are run on the imported Network.
  */

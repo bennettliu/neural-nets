@@ -1,19 +1,22 @@
 /*
  * Authored by Bennett Liu on September 20th, 2019
+ * 
  * NetworkTrainer.java implements a trainer of the feed-forward multi-layer perceptron network defined in Network.java. 
  * Given a training set and training parameters, NetworkTrainer minimizes the error of the perceptron on the training set.
  * 
  * Contains the following methods:
  * 
- * Method                  Description
- * NetworkTrainer          A constructor for creating a Network, given a network and a training set.
- * calcError               Calculates the total error for the whole training set.
- * train                   Runs training steps while certain conditions are met.
- * adaptiveImprove         Runs adaptive training
- * improve                 Makes a step for a given training case.
- * printResults            Prints information on each training case.
- * getNetwork              Returns the current network.
+ * Method                  |  Description
+ * ------------------------|---------------------
+ * NetworkTrainer          |  A constructor for creating a Network, given a network and a training set.
+ * calcError               |  Calculates the total error for the whole training set.
+ * train                   |  Runs training steps while certain conditions are met.
+ * adaptiveImprove         |  Runs adaptive training
+ * improve                 |  Makes a step for a given training case.
+ * printResults            |  Prints information on each training case.
+ * getNetwork              |  Returns the current network.
  */
+
 import java.util.*;
 
 public class NetworkTrainer

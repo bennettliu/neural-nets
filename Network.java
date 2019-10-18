@@ -1,25 +1,28 @@
 /*
  * Authored by Bennett Liu on September 18th, 2019
- * Network.java implements a multi-layer feed-forward perceptron neural network customizable for any positive number 
- * of layers and nodes.
+ * 
+ * Network.java implements a configurable multi-layer feed-forward perceptron neural network. Network is configurable 
+ * for any positive number of layers, nodes, and with any weight values.
  * 
  * Contains the following methods:
  * 
- * Method                  Description
- * Network                 A constructor for creating a Network with randomized weights.
- * Network                 A constructor for loading a Network from a file.
- * exportNet               Exports the Network to a specified file.
- * calcMaxNodes            Calculates the most nodes a layer has.
- * initRandomizedWeights   Randomly initializes the weights matrix, given bounds.
- * initActivationVals      Creates the activations matrix.
- * loadTrainingCase        Loads a given training case into the input activations.
- * thresholdF              The threshold function applied to a node's input values.
- * dThresholdF             The derivative of the threshold function.
- * dotProduct              Calculates the dot product for node (n, i)'s input values.
- * eval                    Evaluates the network, given a training case.
- * getDErrors              Finds the partial derivatives relative to the weights of a given case's total error.
- * setWeights              Sets the weights to a given matrix.
+ * Method                  |  Description
+ * ------------------------|---------------------
+ * Network                 |  A constructor for creating a Network with randomized weights.
+ * Network                 |  A constructor for loading a Network from a file.
+ * exportNet               |  Exports the Network to a specified file.
+ * calcMaxNodes            |  Calculates the most nodes a layer has.
+ * initRandomizedWeights   |  Randomly initializes the weights matrix, given bounds.
+ * initActivationVals      |  Creates the activations matrix.
+ * loadTrainingCase        |  Loads a given training case into the input activations.
+ * thresholdF              |  The threshold function applied to a node's input values.
+ * dThresholdF             |  The derivative of the threshold function.
+ * dotProduct              |  Calculates the dot product for node (n, i)'s input values.
+ * eval                    |  Evaluates the network, given a training case.
+ * getDErrors              |  Finds the partial derivatives relative to the weights of a given case's total error.
+ * setWeights              |  Sets the weights to a given matrix.
  */
+
 import java.util.*;
 import java.io.*;
 
@@ -118,7 +121,8 @@ public class Network
     */
     public void exportNet(String fileName)
     {
-      try {
+      try 
+      {
          FileWriter fw = new FileWriter(fileName);
          BufferedWriter writer = new BufferedWriter(fw);
 

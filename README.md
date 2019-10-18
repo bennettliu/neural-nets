@@ -3,10 +3,10 @@ This project implements a feed-forward multi-layer perceptron model.
 
 It contains two main classes for training and running. 
 
-Main Class       | Purpose
+Class Name       | Purpose
 ---------------- | -------------
-Main.java        | Training and Exporting Networks
-RunNetwork.java  | Importing and Running Networks
+Main             | Training and Exporting Networks
+RunNetwork       | Importing and Running Networks
 
 # General Usage
 For neatness, all log files will be placed in the logs folder. While all valid file paths are supported, please export networks to the networks folder. 
@@ -24,5 +24,5 @@ After running training, networks will be exported to files. Run these files with
 
 To compile, run, and delete all class files afterwards, run `javac *.java && java RunNetwork && rm *.class`
 
-# To submit to Dr. Nelson
-Run `rm -f *.zip && zip -u bennett_liu_perceptron.zip *.java && zip -u bennett_liu_perceptron.zip README.md && zip -u bennett_liu_perceptron.zip logs && zip -u bennett_liu_perceptron.zip networks` to create a zip of only Java code and `README.md`
+# To submit to Dr. Nelson:
+Run `rm -f *.zip && zip -u bennett_liu_perceptron.zip *.java && zip -u bennett_liu_perceptron.zip README.md && zip -u bennett_liu_perceptron.zip logs && zip -u bennett_liu_perceptron.zip networks` to create a zip of only Java code, folders, and `README.md`
