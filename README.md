@@ -15,7 +15,7 @@ For neatness, all log files will be placed in the logs folder. While all valid f
 To compile this project, navigate into the project and execute `javac *.java`. 
 
 # Training and Exporting Networks
-To run, execute `java Main`.
+To run, execute `java Main`. Enter the requested values. Only networks with one hidden layer will train.
 
 To compile, run, and delete all class files afterwards, run `javac *.java && java Main && rm *.class`
 
