@@ -80,9 +80,7 @@ public class Network
 
          nodesInLayer = new int[layers];                          // Parse the number of nodes in each layer
          for (int i = 0; i < layers; i++)
-         {
             nodesInLayer[i] = scanner.nextInt();
-         }
          
          inputLayer = 0;                                          // Input layer index is always 0
          inputs = nodesInLayer[inputLayer];                       // Get nodes in input layer
@@ -130,10 +128,10 @@ public class Network
             writer.append(String.format("%d ", nodesInLayer[i]));
          writer.append("\n");
 
-         for (int m = 0; m < layers - 1; m++)                                    // Print all weights
+         for (int m = 0; m < (layers - 1); m++)                                  // Print all weights
          {
             writer.append("\n");
-            for (int i = 0; i < nodesInLayer[m]; i++)                            // Prints weights connecting layer m - 1 to m
+            for (int i = 0; i < nodesInLayer[m]; i++)                            // Prints weights connecting layer m to m + 1
             {
                for (int j = 0; j < nodesInLayer[m + 1]; j++) 
                {
@@ -171,7 +169,7 @@ public class Network
       weights = new double[layers - 1][maxNodes][maxNodes];
 
       Random random = new Random();                            // initialize all weights as random
-      for (int n = 0; n < layers - 1; n++) 
+      for (int n = 0; n < (layers - 1); n++) 
       {
          for (int i = 0; i < nodesInLayer[n]; i++) 
          {
@@ -263,7 +261,7 @@ public class Network
       
       for (int output = 0; output < truths.length; output++)
       {
-         double dp1 = dotProduct(2, output);
+         double dp1 = dotProduct(2, output);                // Sum of inputs into node (2, output). This is specified in course note 1.
          for (int i = 0; i < nodesInLayer[1]; i++)          // Calculates partial derivatives of second layer
          {
             Dweights[1][i][output] = (results[output] - truths[output]) * dThresholdF(dp1) * activationVals[1][i];
@@ -273,7 +271,7 @@ public class Network
          {
             for (int j = 0; j < nodesInLayer[1]; j++)
             {
-               double dp2 = dotProduct(1, j);
+               double dp2 = dotProduct(1, j);               // Sum of inputs into node (1, j). This is specified in course note 1.
                Dweights[0][i][j] = (results[output] - truths[output]) * dThresholdF(dp2) * dThresholdF(dp1) * activationVals[0][i] * weights[1][j][output];
             }
          }

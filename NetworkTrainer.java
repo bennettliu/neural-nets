@@ -52,7 +52,7 @@ public class NetworkTrainer
          for (int j = 0; j < results.length; j++)                    // Calculate error for given training case
             totalError += (trainingOutputs[i][j] - results[j]) * (trainingOutputs[i][j] - results[j]);
       }
-      totalError /= 2;
+      totalError /= 2;                                               // This halving of error is specified in design doc 1.
 
       return totalError;
    }
@@ -60,23 +60,23 @@ public class NetworkTrainer
    /*
     * train runs multiple steps while some conditions are still met.
     */
-   public void train(double initialLambda, double adaptiveConstant, int maxSteps, double minError, double minTrainingFactor,int savePeriod) 
+   public void train(double initialLambda, double adaptiveConstant, int maxSteps, double minError, double minTrainingFactor, int savePeriod) 
    {
       trainingFactor = initialLambda;                                   // Set training factors
       adaptFactor = adaptiveConstant;
 
       int step = 0;
       boolean improved = true;
-      while (step < maxSteps && error >= minError && trainingFactor >= minTrainingFactor && (adaptFactor != 1 || improved))
+      while ((step < maxSteps) && (error >= minError) && (trainingFactor >= minTrainingFactor) && (adaptFactor != 1 || improved))
       {
          step++;
 
          improved = adaptiveImprove();
 
-         if (savePeriod != 0 && step % savePeriod == 0)                 // Saves and prints output every savePeriod steps
+         if ((savePeriod != 0) && ((step % savePeriod) == 0))                 // Saves and prints output every savePeriod steps
          {
             printResults();
-            network.exportNet("logs/" + (new Date()).getTime() + ".txt");      
+            network.exportNet("logs/" + (new Date()).getTime() + ".txt");
          }
       }
 
@@ -150,7 +150,7 @@ public class NetworkTrainer
          {
             for (int j = 0; j < Dweights[0][0].length; j++) 
             {
-               newWeights[n][i][j] = network.weights[n][i][j] - trainingFactor * Dweights[n][i][j];
+               newWeights[n][i][j] = network.weights[n][i][j] - (trainingFactor * Dweights[n][i][j]);
             }
          }
       }
