@@ -8,8 +8,10 @@
 import java.util.*;
 import java.io.*;
 
-public class RunNetwork {
-   public static void main(String[] args) {
+public class RunNetwork 
+{
+   public static void main(String[] args) 
+   {
       int inputNodes;                        // The number of inputs
       int outputNodes;                       // The number of outputs
       int testCases;                         // The number of test cases

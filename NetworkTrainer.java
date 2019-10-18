@@ -76,7 +76,7 @@ public class NetworkTrainer
 
          improved = adaptiveImprove();                                        // Run an adaptive step and save the result
 
-         if ((savePeriod != 0) && ((step % savePeriod) == 0))                 // Saves and prints output every savePeriod steps
+         if ((savePeriod > 0) && ((step % savePeriod) == 0))                 // Saves and prints output every savePeriod steps
          {
             printResults();
             network.exportNet("logs/" + (new Date()).getTime() + ".txt");

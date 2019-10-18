@@ -13,8 +13,10 @@
 
 import java.util.*;
 
-public class Main {
-   public static void main(String[] args) {
+public class Main 
+{
+   public static void main(String[] args) 
+   {
       int inputNodes;                        // The number of inputs in the new network
       int hiddenLayers;                      // The number of hidden layers in the new network
       int hiddenLayerNodes[];                // The number of nodes in each layer of the new network
@@ -40,7 +42,7 @@ public class Main {
        * 
        * The number of input nodes
        * The number of hidden layers
-       * The number of nodes in each layer
+       * The number of nodes in each hidden layer
        * The number of output nodes
        * The range in which weights will be randomized
        */
@@ -106,10 +108,10 @@ public class Main {
           * Read training case inputs, namely:
           *
           * The initial training factor
-          * The adapative training constant
+          * The adaptive training constant
           * The maximum number of steps
           * The ceiling of the desired error
-          * The period of steps at which user updates and saves will be executed
+          * The period of steps at which user is updated and saves will be executed
           */
          System.out.println("Initial Training Factor (Lambda): ");
          trainingFactor = in.nextDouble();
