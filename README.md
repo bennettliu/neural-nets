@@ -9,7 +9,7 @@ Main             | Training and Exporting Networks
 RunNetwork       | Importing and Running Networks
 
 # General Usage
-For neatness, all log files will be placed in the logs folder. While all valid file paths are supported, please export networks to the networks folder. 
+For neatness, all log files will be placed in the `logs` folder. While all valid file paths are supported, please export networks to the `networks` folder. 
 
 # Compilation
 To compile this project, navigate into the project and execute `javac *.java`. 
@@ -51,4 +51,4 @@ After running training, networks will be exported to files. Run these files with
 To compile, run, and delete all class files afterwards, run `javac *.java && java RunNetwork && rm *.class`
 
 # To submit to Dr. Nelson:
-Run `rm -f *.zip && zip -u bennett_liu_perceptron.zip *.java && zip -u bennett_liu_perceptron.zip README.md && zip -u bennett_liu_perceptron.zip logs && zip -u bennett_liu_perceptron.zip networks` to create a zip of only Java code, folders, and `README.md`
+Run `rm -f *.zip && rm -f *.class && zip -u -r bennett_liu_perceptron.zip * && zip -d -r bennett_liu_perceptron.zip networks/*` to create a zip of only Java code, folders, and `README.md`
