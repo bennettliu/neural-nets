@@ -16,19 +16,16 @@ public class RunNetwork {
       double testInputs[][];                 // The inputs for each test case
       double testOutputs[][];                // The outputs for each test case
 
-      /*
-       * Read network inputs, namely:
-       * 
-       * The number of input nodes
-       * The number of output nodes
-       */
-      Scanner in = new Scanner(System.in);      
-      System.out.println("How many input nodes: ");
-      inputNodes = in.nextInt();
+      Scanner in = new Scanner(System.in);   // Create scanner to take input from console 
 
-      System.out.println("How many output nodes: ");
-      outputNodes = in.nextInt();
+      // Import network from file
+      System.out.println("Enter the file that you'd like to import your network from: ");
+      String fileName = in.next();
+      Network network = new Network(new File(fileName));
 
+      inputNodes = network.inputs;
+      outputNodes = network.outputs;
+      
       /*
        * Read test case inputs, namely:
        * 
@@ -55,9 +52,6 @@ public class RunNetwork {
             testOutputs[i - 1][j - 1] = in.nextDouble();
          }
       }
-
-      // Create network
-      Network network = new Network(new File("logs/endPoint.txt"));
 
       // Initialize trainer and evaluate the initial network for all test cases
       NetworkTrainer trainer = new NetworkTrainer(network, testInputs, testOutputs);
