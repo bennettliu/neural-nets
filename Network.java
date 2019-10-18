@@ -166,7 +166,7 @@ public class Network
    /*
     * initRandomizedWeights creates a new weight matrix and fills in randomized weight values, given a range.
     */
-   void initRandomizedWeights(double minWeight, double maxWeight) 
+   private void initRandomizedWeights(double minWeight, double maxWeight) 
    {
       weights = new double[layers - 1][maxNodes][maxNodes];
 
@@ -188,7 +188,7 @@ public class Network
    /*
     * initActivationVals creates a new activation values matrix.
     */
-   void initActivationVals() 
+   private void initActivationVals() 
    {
       activationVals = new double[layers][maxNodes];
       return;
@@ -197,7 +197,7 @@ public class Network
    /*
     * loadTrainingCase initializes the input nodes' activation values, given a training case.
     */
-   void loadTrainingCase(double trainingCase[]) 
+   private void loadTrainingCase(double trainingCase[]) 
    {
       for (int i = 0; i < inputs; i++) 
          activationVals[inputLayer][i] = trainingCase[i];
@@ -207,7 +207,7 @@ public class Network
    /*
     * thresholdF returns the result of the threshold function used to determine a node's activation state. 
     */
-   public double thresholdF(double x) 
+   private double thresholdF(double x) 
    {
       return 1.0 / (1.0 + Math.exp(-x));
    }
@@ -215,7 +215,7 @@ public class Network
    /*
     * dThresholdF returns the derivative of the function thresholdF
     */
-   public double dThresholdF(double x) 
+   private double dThresholdF(double x) 
    {
       return thresholdF(x) * (1.0 - thresholdF(x));
    }
@@ -223,7 +223,7 @@ public class Network
    /*
     * dotProduct calculates the dot product of node (n, i)'s input activation values and weights, given n and i.
     */
-   double dotProduct(int n, int i)
+   private double dotProduct(int n, int i)
    {
       int m = n - 1;                                  // m is the weight index connecting layer n - 1 to n, given by m = n - 1 
       double dotProduct = 0;

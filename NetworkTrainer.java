@@ -42,7 +42,7 @@ public class NetworkTrainer
    /*
     * calcError returns the total error when the network is run for all input-output pairs.
     */
-   public double calcError() 
+   private double calcError() 
    {
       double totalError = 0;
       for (int i = 0; i < trainingInputs.length; i++)
@@ -98,7 +98,7 @@ public class NetworkTrainer
     * and attempts these steps simultaneously. If the step improves error, the training factor is increased, 
     * otherwise the weights are rolled back and training factor is decreased. Returns whether error was improved.
     */
-   public boolean adaptiveImprove()
+   private boolean adaptiveImprove()
    {
       boolean improved;
       double newError;
@@ -139,7 +139,7 @@ public class NetworkTrainer
     * improve decreases the network's weights by the training factor (lambda) multiplied by the partial derivatives 
     * of total error.
     */
-   public void improve(int trainingCase) 
+   private void improve(int trainingCase) 
    {
       double Dweights[][][] = network.getDErrors(trainingInputs[trainingCase], trainingOutputs[trainingCase]);
 
