@@ -29,6 +29,7 @@ public class Main {
       double adaptiveConstant;               // The adaptive lambda factor. Adaptive training can be disabled by setting to 1
       int stepLimit;                         // The maximum number of steps the training algorithm will take
       double errorLimit;                     // The desired error, training will stop if/when this target is met
+      double trainingFactorLimit;            // The minimum training factor (lambda) for training to run
       int updateSavePeriod;                  // The period of steps at which progress will be reported and the network saved
 
       Scanner in = new Scanner(System.in);   // Create scanner to take input from console
@@ -121,11 +122,14 @@ public class Main {
          System.out.println("Training Error Limit: ");
          errorLimit = in.nextDouble();
 
+         System.out.println("Training Factor Limit: ");
+         trainingFactorLimit = in.nextDouble();
+
          System.out.println("Training Update and Save Period: ");
          updateSavePeriod = in.nextInt();
 
          // Train the network with the given parameters
-         trainer.train(trainingFactor, adaptiveConstant, stepLimit, errorLimit, updateSavePeriod);
+         trainer.train(trainingFactor, adaptiveConstant, stepLimit, errorLimit, trainingFactorLimit, updateSavePeriod);
 
          trainer.printResults();                            // Evaluate the final network for all training cases
          network = trainer.getNetwork();                    // Retrieve trained network

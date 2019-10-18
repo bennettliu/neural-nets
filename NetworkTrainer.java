@@ -60,14 +60,14 @@ public class NetworkTrainer
    /*
     * train runs multiple steps while some conditions are still met.
     */
-   public void train(double initialLambda, double adaptiveConstant, int maxSteps, double minError, int savePeriod) 
+   public void train(double initialLambda, double adaptiveConstant, int maxSteps, double minError, double minTrainingFactor,int savePeriod) 
    {
       trainingFactor = initialLambda;                                   // Set training factors
       adaptFactor = adaptiveConstant;
 
       int step = 0;
       boolean improved = true;
-      while (step < maxSteps && error > minError && trainingFactor > 0 && (adaptFactor != 1 || improved))
+      while (step < maxSteps && error >= minError && trainingFactor >= minTrainingFactor && (adaptFactor != 1 || improved))
       {
          step++;
 
@@ -84,12 +84,12 @@ public class NetworkTrainer
       System.out.println(String.format("Terminated after %d steps", step));
       if (step >= maxSteps) 
          System.out.println(String.format("Steps passed limit of %d", maxSteps));
-      if (error <= minError) 
+      if (error < minError) 
          System.out.println(String.format("Error fell below %.15f", minError));
       if (adaptFactor == 1 && !improved) 
          System.out.println("Was not able to improve error.");
-      if (trainingFactor <= 0) 
-         System.out.println("Training factor (lambda) reached 0");
+      if (trainingFactor < minTrainingFactor) 
+         System.out.println(String.format("Training factor (lambda) fell below %.15f", minTrainingFactor));
       System.out.println();
    }
 
