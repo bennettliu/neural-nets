@@ -7,13 +7,13 @@ import java.util.*;
 
 public class NetworkTrainer
 {
-   Network network;           // The network to be trained
+   Network network;              // The network to be trained
    double testInputs[][];
    double testOutputs[][];
-   double weights[][][];
+
    double error;
-   double trainingFactor;
-   double adaptFactor;
+   double trainingFactor;        // The training factor (lambda)
+   double adaptFactor;           // The adaptive factor, used to modify lambda
 
    /*
     * The Network constructor creates a new Network, given the number of input nodes, nodes in each hidden layer, and output nodes.
@@ -62,16 +62,7 @@ public class NetworkTrainer
       {
          step++;
 
-         improved = false;
-         for (int i = 0; i < testInputs.length; i++) 
-         {
-            improved = improved || improve(i);
-         }
-
-         if (improved) 
-            trainingFactor *= adaptFactor;
-         else 
-            trainingFactor /= adaptFactor;
+         improved = adaptiveImprove();
 
          if (savePeriod != 0 && step % savePeriod == 0)
          {
@@ -85,61 +76,70 @@ public class NetworkTrainer
       if (step >= maxSteps) 
          System.out.println(String.format("Steps passed limit of %d", maxSteps));
       if (error <= minError) 
-         System.out.println(String.format("Error fell below %f", minError));
-      if (!improved) 
+         System.out.println(String.format("Error fell below %.15f", minError));
+      if (adaptFactor == 1 && !improved) 
          System.out.println("Was not able to improve error.");
       if (trainingFactor <= 0) 
          System.out.println("Training factor (lambda) reached 0");
       System.out.println();
    }
 
-   /*
-    * improve changes the network's weights to decrease the total error. Modifies weights by the training 
-    * factor (lambda) multiplied by the partial derivatives of total error.
-    * Adapts lambda by factors of 2 to ensure that it does not overstep. Returns whether error was successfully improved.
-    */
-   public boolean improve(int testcase) 
+   public boolean adaptiveImprove()
    {
-      double Dweights[][][] = network.getDErrors(testInputs[testcase], testOutputs[testcase]);
+      boolean improved;
       double oldWeights[][][] = new double[network.layers - 1][network.maxNodes][network.maxNodes];
-      for (int n = 0; n < Dweights.length; n++) 
+      for (int n = 0; n < network.weights.length; n++) 
       {
-         for (int i = 0; i < Dweights[0].length; i++) 
+         for (int i = 0; i < network.weights[0].length; i++) 
          {
-            for (int j = 0; j < Dweights[0][0].length; j++) 
+            for (int j = 0; j < network.weights[0][0].length; j++) 
             {
                oldWeights[n][i][j] = network.weights[n][i][j];
             }
          }
       }
 
+      for (int testcase = 0; testcase < testInputs.length; testcase++)
+         improve(testcase);
+         
+      double newError = calcError();
+      if (newError < error) 
+      {
+         error = newError;
+         trainingFactor *= adaptFactor;
+         improved = true;
+      }
+      else 
+      {
+         network.setWeights(oldWeights);
+         trainingFactor /= adaptFactor;
+         improved = false;
+      }
+      return improved;
+   }
+
+   /*
+    * improve changes the network's weights to decrease the total error. Modifies weights by the training 
+    * factor (lambda) multiplied by the partial derivatives of total error.
+    * Adapts lambda by factors of 2 to ensure that it does not overstep.
+    */
+   public void improve(int testcase) 
+   {
       double newWeights[][][] = new double[network.layers - 1][network.maxNodes][network.maxNodes];
+      double Dweights[][][] = network.getDErrors(testInputs[testcase], testOutputs[testcase]);
       for (int n = 0; n < Dweights.length; n++) 
       {
          for (int i = 0; i < Dweights[0].length; i++) 
          {
             for (int j = 0; j < Dweights[0][0].length; j++) 
             {
-               newWeights[n][i][j] = oldWeights[n][i][j] - trainingFactor * Dweights[n][i][j];
+               newWeights[n][i][j] = network.weights[n][i][j] - trainingFactor * Dweights[n][i][j];
             }
          }
       }
       network.setWeights(newWeights);
-      double newError = calcError();
 
-      boolean improved;
-      if (newError < error) 
-      {
-         error = newError;
-         improved = true;
-      }
-      else 
-      {
-         network.setWeights(oldWeights);
-         improved = false;
-      }
-
-      return improved;
+      return;
    }
 
    /*
@@ -177,7 +177,7 @@ public class NetworkTrainer
 
          System.out.println();
       }
-      System.out.println(String.format("Lambda: %f", trainingFactor));
+      System.out.println(String.format("Lambda: %.15f", trainingFactor));
       System.out.println(String.format("Total Error: %.15f", error));
       System.out.println();
    }
