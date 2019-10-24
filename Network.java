@@ -161,7 +161,7 @@ public class Network
    private void calcMaxNodes()
    {
       maxNodes = 0;
-      for (int i = 0; i < nodesInLayer.length; i++) 
+      for (int i = 0; i < layers; i++) 
          maxNodes = Math.max(maxNodes, nodesInLayer[i]);
       
       return;
@@ -262,10 +262,10 @@ public class Network
     */
    public double[][][] getDErrors(double trainingCase[], double[] truths) 
    {
-      double Dweights[][][] = new double[weights.length][weights[0].length][weights[0][0].length];
+      double Dweights[][][] = new double[layers - 1][maxNodes][maxNodes];
       double[] results = eval(trainingCase);
       
-      for (int output = 0; output < truths.length; output++)
+      for (int output = 0; output < outputs; output++)
       {
          double dp1 = dotProduct(2, output);                // Sum of inputs into node (2, output). Specified in course note 1.
          double diff = (results[output] - truths[output]);
@@ -282,7 +282,7 @@ public class Network
                Dweights[0][i][j] = diff * dThresholdF(dp2) * dThresholdF(dp1) * activationVals[0][i] * weights[1][j][output];
             }
          }
-      }  // for (int output = 0; output < truths.length; output++)
+      }  // for (int output = 0; output < outputs; output++)
       
       return Dweights;
    }  // public double[][][] getDErrors(double trainingCase[], double[] truths) 
