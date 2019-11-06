@@ -48,14 +48,16 @@ public class NetworkTrainer
    private double calcError() 
    {
       double totalError = 0.0;
+      double diff = 0.0;
       for (int i = 0; i < trainingInputs.length; i++)
       {
          double[] results = network.eval(trainingInputs[i]);         // Get results
 
          for (int j = 0; j < results.length; j++)                    // Calculate error for given training case
-            totalError += (trainingOutputs[i][j] - results[j]) * (trainingOutputs[i][j] - results[j]);
+            diff = (trainingOutputs[i][j] - results[j]);
+            totalError += diff * diff;
       }
-      totalError /= 2;                                               // This halving of error is specified in design doc 1.
+      totalError /= 2.0;                                             // This halving of error is specified in design doc 1.
 
       return totalError;
    }  // private double calcError() 
