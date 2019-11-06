@@ -230,7 +230,7 @@ public class Network
    private double dotProduct(int n, int i)
    {
       int m = n - 1;                                  // m is the weight index connecting layer n - 1 to n, given by m = n - 1 
-      double dotProduct = 0;
+      double dotProduct = 0.0;
 
       for (int j = 0; j < nodesInLayer[n - 1]; j++)   // Calculates dot product of activationVals[n-1][] and weights[m][][i]
          dotProduct += activationVals[n - 1][j] * weights[m][j][i];

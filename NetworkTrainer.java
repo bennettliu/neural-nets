@@ -47,7 +47,7 @@ public class NetworkTrainer
     */
    private double calcError() 
    {
-      double totalError = 0;
+      double totalError = 0.0;
       for (int i = 0; i < trainingInputs.length; i++)
       {
          double[] results = network.eval(trainingInputs[i]);         // Get results

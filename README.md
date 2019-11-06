@@ -41,7 +41,7 @@ In these files, all values are separated by spaces or carriage returns. These fi
    *  The maximum number of steps (integer)
    *  The ceiling of the desired error (decimal)
    *  The period of steps at which user updates and the network is saved (integer)
-      *  If set ≤ 0, no updates/saves will occur
+      *  If set ≤ 0.0, no updates/saves will occur
 *  Exporting
    *  The file where the network should be exported to. Usually `networks/DESCRIPTIVE_NAME.txt`.
 
