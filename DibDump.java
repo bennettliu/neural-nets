@@ -659,30 +659,30 @@ typedef RGBQUAD FAR* LPRGBQUAD;
                   for (j = 0; j < iDeadBytes; ++j) in.readUnsignedByte(); // Now read in the "dead bytes" to pad to a 4 byte boundary
                   }
                break;
-            case 16: // Not likely to work (format is not internally consistent), not tested.
-/*
-* Each two bytes read in is 1 column. Each color is 5 bits in the 2 byte word value, so we shift 5 bits and then mask them
-* off with 0x1F which is %11111 in binary. We then read in the dead bytes so that each scan line is a multiple of 4 bytes.
-*/
-               iPelsPerRow = bmpInfoHeader_biWidth;
-               iDeadBytes = (4 - iPelsPerRow % 4) % 4;
-               for (int row = 0; row < bmpInfoHeader_biHeight; ++row) // read over the rows
-                  {
-                  if (topDownDIB) i = row; else i = bmpInfoHeader_biHeight - 1 - row;
-
-                  for (j = 0; j < iPelsPerRow; ++j)         // j is now just the column counter
+               case 16: // Not likely to work (format is not internally consistent), not tested.
+   /*
+   * Each two bytes read in is 1 column. Each color is 5 bits in the 2 byte word value, so we shift 5 bits and then mask them
+   * off with 0x1F which is %11111 in binary. We then read in the dead bytes so that each scan line is a multiple of 4 bytes.
+   */
+                  iPelsPerRow = bmpInfoHeader_biWidth;
+                  iDeadBytes = (4 - iPelsPerRow % 4) % 4;
+                  for (int row = 0; row < bmpInfoHeader_biHeight; ++row) // read over the rows
                      {
-                     pel = dibdumper.swapShort(in.readUnsignedShort()); // Need to deal with little endian values
-                     rgbQuad_rgbBlue      =  pel        & 0x1F;
-                     rgbQuad_rgbGreen     = (pel >> 5)  & 0x1F;   
-                     rgbQuad_rgbRed       = (pel >> 10) & 0x1F;
-                     pel = (rgbQuad_rgbRed << 16) | (rgbQuad_rgbGreen << 8) | rgbQuad_rgbBlue;
-                     imageArray[i][j] = pel;
-                     }
-
-                  for (j = 0; j < iDeadBytes; ++j) in.readUnsignedByte(); // Now read in the "dead bytes" to pad to a 4 byte boundary
-                  } // for (i = bmpInfoHeader_biHeight - 1; i >= 0; --i)
-               break;
+                     if (topDownDIB) i = row; else i = bmpInfoHeader_biHeight - 1 - row;
+   
+                     for (j = 0; j < iPelsPerRow; ++j)         // j is now just the column counter
+                        {
+                        pel = dibdumper.swapShort(in.readUnsignedShort()); // Need to deal with little endian values
+                        rgbQuad_rgbBlue      =  pel        & 0x1F;
+                        rgbQuad_rgbGreen     = (pel >> 5)  & 0x1F;   
+                        rgbQuad_rgbRed       = (pel >> 10) & 0x1F;
+                        pel = (rgbQuad_rgbRed << 16) | (rgbQuad_rgbGreen << 8) | rgbQuad_rgbBlue;
+                        imageArray[i][j] = pel;
+                        }
+   
+                     for (j = 0; j < iDeadBytes; ++j) in.readUnsignedByte(); // Now read in the "dead bytes" to pad to a 4 byte boundary
+                     } // for (i = bmpInfoHeader_biHeight - 1; i >= 0; --i)
+                  break;
             case 24: // Works
 /*
 * Each three bytes read in is 1 column. Each scan line is padded to by a multiple of 4 bytes. The disk image has only 3 however.
@@ -753,6 +753,33 @@ typedef RGBQUAD FAR* LPRGBQUAD;
             System.out.printf("\n");
             }
          }
+
+/*
+ * Write to file 
+ */
+      try 
+      {
+         FileWriter fw = new FileWriter("fileName.txt");
+         BufferedWriter writer = new BufferedWriter(fw);
+
+         iBytesPerRow = bmpInfoHeader_biWidth;
+         for (i = 0; i < bmpInfoHeader_biHeight; ++i) // read over the rows
+         {
+            for (j = 0; j < iBytesPerRow; ++j)         // j is now just the column counter
+            {
+               double d = (imageArray[i][j] + 16777216.0)/16777216;
+               writer.append(String.format("%.16f ", d));
+               // writer.append(imageArray[i][j] + "\t");
+            }
+            writer.append("\n");
+         }
+
+         writer.close();
+      } 
+      catch (IOException e) 
+      {
+         e.printStackTrace();
+      }
 
 /*
  * Now write out the true color bitmap to a disk file. This is here mostly to be sure we did it all correctly.
