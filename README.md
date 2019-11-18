@@ -40,6 +40,7 @@ In these files, all values are separated by spaces or carriage returns. These fi
    *  The adaptive training constant (decimal)
    *  The maximum number of steps (integer)
    *  The ceiling of the desired error (decimal)
+   *  The lower limit of the training factor (decimal)
    *  The period of steps at which user updates and the network is saved (integer)
       *  If set ≤ 0.0, no updates/saves will occur
 *  Exporting
