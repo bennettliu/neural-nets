@@ -127,7 +127,7 @@ public class RPS
          errorLimit = 0.01;
          trainingFactorLimit = 0;
          updateSavePeriod = 0;
-         trainer.train(trainingFactor, adaptiveConstant, stepLimit, errorLimit, trainingFactorLimit, updateSavePeriod);
+         trainer.train(trainingFactor, adaptiveConstant, stepLimit, errorLimit, trainingFactorLimit, updateSavePeriod, updateSavePeriod);
          network = trainer.getNetwork();                    // Retrieve trained network
 
          // Change inputs

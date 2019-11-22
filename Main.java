@@ -33,7 +33,8 @@ public class Main
       int stepLimit;                         // The maximum number of steps the training algorithm will take
       double errorLimit;                     // The desired error, training will stop if/when this target is met
       double trainingFactorLimit;            // The minimum training factor (lambda) for training to run
-      int updateSavePeriod;                  // The period of steps at which progress will be reported and the network saved
+      int updatePeriod;                      // The period of steps at which progress will be reported
+      int savePeriod;                        // The period of steps at which the network saved
 
       Scanner in = new Scanner(System.in);   // Create scanner to take input from console
 
@@ -128,11 +129,14 @@ public class Main
          System.out.println("Training Factor Limit: ");
          trainingFactorLimit = in.nextDouble();
 
-         System.out.println("Training Update and Save Period: ");
-         updateSavePeriod = in.nextInt();
+         System.out.println("Training Update Period: ");
+         updatePeriod = in.nextInt();
+
+         System.out.println("Training Save Period: ");
+         savePeriod = in.nextInt();
 
          // Train the network with the given parameters
-         trainer.train(trainingFactor, adaptiveConstant, stepLimit, errorLimit, trainingFactorLimit, updateSavePeriod);
+         trainer.train(trainingFactor, adaptiveConstant, stepLimit, errorLimit, trainingFactorLimit, updatePeriod, savePeriod);
 
          trainer.printResults();                            // Evaluate the final network for all training cases
          network = trainer.getNetwork();                    // Retrieve trained network

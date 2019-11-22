@@ -67,7 +67,7 @@ public class NetworkTrainer
    /*
     * train runs multiple steps while some conditions are still met.
     */
-   public void train(double initLambda, double adaptConst, int maxSteps, double minError, double minLambda, int savePeriod)
+   public void train(double initLambda, double adaptConst, int maxSteps, double minError, double minLambda, int updatePeriod, int writePeriod)
    {
       trainingFactor = initLambda;                                   // Set training factors
       adaptConstant = adaptConst;
@@ -80,14 +80,13 @@ public class NetworkTrainer
 
          improved = adaptiveImprove();                                        // Run an adaptive step and save the result
 
-         if ((savePeriod > 0) && ((step % savePeriod) == 0))                 // Saves and prints output every savePeriod steps
-         {
+         if ((updatePeriod > 0) && ((step % updatePeriod) == 0))              // Saves and prints output every updatePeriod steps
             printResults();
+         if ((writePeriod > 0) && ((step % writePeriod) == 0))                // Saves and prints output every updatePeriod steps
             network.exportNet("logs/" + (new Date()).getTime() + ".txt");
-         }
       }  // while ((step < maxSteps) && (error >= minError) && (trainingFactor >= minLambda) && (adaptConstant != 1 || improved))
 
-      System.out.println();                                             // Print the reason(s) for termination
+      System.out.println();                                                   // Print the reason(s) for termination
       System.out.println(String.format("Terminated after %d steps", step));
       if (step >= maxSteps) 
          System.out.println(String.format("Steps passed limit of %d", maxSteps));
@@ -98,7 +97,7 @@ public class NetworkTrainer
       if (trainingFactor < minLambda) 
          System.out.println(String.format("Training factor (lambda) fell below %.15f", minLambda));
       System.out.println();
-   }  // public void train(double initLambda, double adaptConst, int maxSteps, double minError, double minLambda, int savePeriod)
+   }  // public void train(double initLambda, double adaptConst, int maxSteps, double minError, double minLambda, int updatePeriod, int writePeriod)
 
    /*
     * adaptiveImprove runs a single adaptive training step for each training case. It saves initial weights 
