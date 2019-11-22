@@ -54,8 +54,10 @@ public class NetworkTrainer
          double[] results = network.eval(trainingInputs[i]);         // Get results
 
          for (int j = 0; j < results.length; j++)                    // Calculate error for given training case
+         {
             diff = (trainingOutputs[i][j] - results[j]);
             totalError += diff * diff;
+         }
       }
       totalError /= 2.0;                                             // This halving of error is specified in design doc 1.
 
