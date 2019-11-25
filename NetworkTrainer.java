@@ -175,14 +175,14 @@ public class NetworkTrainer
       {
          System.out.println(String.format("Case %d:", i + 1));             // Print the number
 
-         System.out.print("Inputs:");                                      // Print the inputs
+         System.out.println("Inputs:");                                      // Print the inputs
          for (int j = 0; j < trainingInputs[0].length; j++)
          {
             System.out.print(String.format(" %.15f", trainingInputs[i][j]));
          }
          System.out.println();
 
-         System.out.print("Results:");                                     // Calculate and print the network's outputs
+         System.out.println("Results:");                                     // Calculate and print the network's outputs
          double results[] = network.eval(trainingInputs[i]);
          for (int j = 0; j < results.length; j++)
          {
@@ -190,7 +190,7 @@ public class NetworkTrainer
          }
          System.out.println();
 
-         System.out.print("Answers:");                                     // Calculate and print the correct outputs
+         System.out.println("Answers:");                                     // Calculate and print the correct outputs
          for (int j = 0; j < trainingOutputs[0].length; j++)
          {
             System.out.print(String.format(" %.15f", trainingOutputs[i][j]));
