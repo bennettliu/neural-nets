@@ -641,13 +641,6 @@ public class PelGetter
          bmpFileHeader_bfReserved2 = dibdumper.swapShort(in.readUnsignedShort());    // WORD
          bmpFileHeader_bfOffBits   = dibdumper.swapInt(in.readInt());                // DWORD
 
-         System.out.printf("bfType=%2X bfSize=%d bfReserved1=%h bfReserved2=%h bfOffBits=%d\n",
-                           bmpFileHeader_bfType,
-                           bmpFileHeader_bfSize,
-                           bmpFileHeader_bfReserved1,
-                           bmpFileHeader_bfReserved2,
-                           bmpFileHeader_bfOffBits);
-
 // Read and convert to big endian
          bmpInfoHeader_biSize          = dibdumper.swapInt(in.readInt());              // DWORD
          bmpInfoHeader_biWidth         = dibdumper.swapInt(in.readInt());              // LONG
@@ -660,21 +653,6 @@ public class PelGetter
          bmpInfoHeader_biYPelsPerMeter = dibdumper.swapInt(in.readInt());              // LONG
          bmpInfoHeader_biClrUsed       = dibdumper.swapInt(in.readInt());              // DWORD
          bmpInfoHeader_biClrImportant  = dibdumper.swapInt(in.readInt());              // DWORD
-
-         System.out.printf("biSize=%d\nbiWidth=%d\nbiHeight=%d\nbiPlanes=%d\nbiBitCount=%d\nbiCompression=%d\nbiSizeImage=%d\nbiXPelsPerMeter=%d\nbiYPelsPerMeter=%d\nbiClrUsed=%d\nbiClrImportant=%d\n",
-                    bmpInfoHeader_biSize,
-                    bmpInfoHeader_biWidth,
-                    bmpInfoHeader_biHeight,
-                    bmpInfoHeader_biPlanes,
-                    bmpInfoHeader_biBitCount,
-                    bmpInfoHeader_biCompression,
-                    bmpInfoHeader_biSizeImage,
-                    bmpInfoHeader_biXPelsPerMeter,
-                    bmpInfoHeader_biYPelsPerMeter,
-                    bmpInfoHeader_biClrUsed,
-                    bmpInfoHeader_biClrImportant);
-
-         System.out.printf("\n");
 
 // Since we use the height to crate arrays, it cannot have a negative a value. If the height field is
 // less than zero, then make it positive and set the topDownDIB flag to TRUE so we know that the image is
@@ -715,7 +693,6 @@ typedef RGBQUAD FAR* LPRGBQUAD;
                numberOfColors = 0; // no color table
             }
 
-         System.out.printf("Color Depth = %d, %d\n", bmpInfoHeader_biBitCount, numberOfColors);
 /*
 * biClrUsed -  Specifies the number of color indexes in the color table that are actually used by the bitmap.
 *     If this value is zero, the bitmap uses the maximum number of colors corresponding to the value of the biBitCount member for the compression mode specified by biCompression.
@@ -980,10 +957,7 @@ typedef RGBQUAD FAR* LPRGBQUAD;
       {
          for (j = 0; j < bmpInfoHeader_biWidth; ++j)         // j is now just the column counter
          {
-            // System.out.print(String.format(" %.15f", d[i * bmpInfoHeader_biHeight + j]));
             imageArray[i][j] = (int)(d[i * bmpInfoHeader_biWidth + j] * 16777215) - 16777216;
-            // imageArray[i][j] -= 1;
-            System.out.print(String.format(" %d", imageArray[i][j]));
          }
       }
 /*
