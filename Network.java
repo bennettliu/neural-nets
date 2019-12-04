@@ -232,8 +232,8 @@ public class Network
       int m = n - 1;                                  // m is the weight index connecting layer n - 1 to n, given by m = n - 1 
       double dotProduct = 0.0;
 
-      for (int j = 0; j < nodesInLayer[n - 1]; j++)   // Calculates dot product of activationVals[n-1][] and weights[m][][i]
-         dotProduct += activationVals[n - 1][j] * weights[m][j][i];
+      for (int j = 0; j < nodesInLayer[m]; j++)   // Calculates dot product of activationVals[n-1][] and weights[m][][i]
+         dotProduct += activationVals[m][j] * weights[m][j][i];
 
       return dotProduct;
    }
@@ -264,26 +264,43 @@ public class Network
    {
       double Dweights[][][] = new double[layers - 1][maxNodes][maxNodes];
       double[] results = eval(trainingCase);
-      
-      for (int output = 0; output < outputs; output++)
-      {
-         double dp1 = dotProduct(2, output);                // Sum of inputs into node (2, output). Specified in course note 1.
-         double diff = (results[output] - truths[output]);
-         for (int i = 0; i < nodesInLayer[1]; i++)          // Calculates partial derivatives of second layer
-         {
-            Dweights[1][i][output] = diff * dThresholdF(dp1) * activationVals[1][i];
-         }
 
-         for (int i = 0; i < nodesInLayer[0];i++)           // Calculates partial derivatives of first layer
+      double sum = 0;
+      double lastSum = 0;
+      for (int layer = layers - 2; layer == layers - 2; layer--)
+      {
+         if (layer == layers - 2) 
          {
-            for (int j = 0; j < nodesInLayer[1]; j++)
+            for (int i = 0; i < nodesInLayer[layer + 1]; i++)  // Destination
             {
-               double dp2 = dotProduct(1, j);               // Sum of inputs into node (1, j). Specified in course note 1.
-               Dweights[0][i][j] = diff * dThresholdF(dp2) * dThresholdF(dp1) * activationVals[0][i] * weights[1][j][output];
+               double diff = (results[i] - truths[i]);
+               double capitalO = dotProduct(layer + 1, i);
+               double tridentI1 = diff * dThresholdF(capitalO);
+               sum += tridentI1;
+               for (int j = 0; j < nodesInLayer[layer]; j++)   // Source
+               {
+                  Dweights[layer][j][i] = activationVals[layer][j] * tridentI1;
+               }
             }
-         }
-      }  // for (int output = 0; output < outputs; output++)
-      
+         }  // if (layer == layers - 2) 
+         else
+         {
+            lastSum = sum;
+            sum = 0;
+            for (int k = 0; k < nodesInLayer[layer + 1]; k++)  // Destination
+            {
+               double OK = dotProduct(layer + 1, k);
+               double deltaK = lastSum;
+               double tridentK = deltaK * dThresholdF(OK);
+               sum += tridentK;
+               for (int m = 0; m < nodesInLayer[layer]; m++)   // Source
+               {
+                  Dweights[layer][m][k] = activationVals[layer][m] * tridentK;
+               }
+            }
+         }  // else
+      }  // for (int layer = layers - 2; layer == layers - 2; layer--)
+
       return Dweights;
    }  // public double[][][] getDErrors(double trainingCase[], double[] truths) 
  

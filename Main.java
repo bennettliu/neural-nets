@@ -103,48 +103,41 @@ public class Main
       NetworkTrainer trainer = new NetworkTrainer(network, trainingInputs, trainingOutputs);    // Initialize trainer
       trainer.printResults();                                        // Evaluate initial network for all training cases
 
-      if (hiddenLayers == 1)                                         // Train if contains exactly one hidden layer
-      {
-         /*
-          * Read training case inputs, namely:
-          *
-          * The initial training factor
-          * The adaptive training constant
-          * The maximum number of steps
-          * The ceiling of the desired error
-          * The period of steps at which user is updated and saves will be executed
-          */
-         System.out.println("Initial Training Factor (Lambda): ");
-         trainingFactor = in.nextDouble();
+      /*
+         * Read training case inputs, namely:
+         *
+         * The initial training factor
+         * The adaptive training constant
+         * The maximum number of steps
+         * The ceiling of the desired error
+         * The period of steps at which user is updated and saves will be executed
+         */
+      System.out.println("Initial Training Factor (Lambda): ");
+      trainingFactor = in.nextDouble();
 
-         System.out.println("Adaptive Training Constant: ");
-         adaptiveConstant = in.nextDouble();
+      System.out.println("Adaptive Training Constant: ");
+      adaptiveConstant = in.nextDouble();
 
-         System.out.println("Training Step Limit: ");
-         stepLimit = in.nextInt();
+      System.out.println("Training Step Limit: ");
+      stepLimit = in.nextInt();
 
-         System.out.println("Training Error Limit: ");
-         errorLimit = in.nextDouble();
+      System.out.println("Training Error Limit: ");
+      errorLimit = in.nextDouble();
 
-         System.out.println("Training Factor Limit: ");
-         trainingFactorLimit = in.nextDouble();
+      System.out.println("Training Factor Limit: ");
+      trainingFactorLimit = in.nextDouble();
 
-         System.out.println("Training Update Period: ");
-         updatePeriod = in.nextInt();
+      System.out.println("Training Update Period: ");
+      updatePeriod = in.nextInt();
 
-         System.out.println("Training Save Period: ");
-         savePeriod = in.nextInt();
+      System.out.println("Training Save Period: ");
+      savePeriod = in.nextInt();
 
-         // Train the network with the given parameters
-         trainer.train(trainingFactor, adaptiveConstant, stepLimit, errorLimit, trainingFactorLimit, updatePeriod, savePeriod);
+      // Train the network with the given parameters
+      trainer.train(trainingFactor, adaptiveConstant, stepLimit, errorLimit, trainingFactorLimit, updatePeriod, savePeriod);
 
-         trainer.printResults();                            // Evaluate the final network for all training cases
-         network = trainer.getNetwork();                    // Retrieve trained network
-      }  // if (hiddenLayers == 1)
-      else
-      {
-         System.out.println("Can only train for networks with one hidden layer.");
-      }
+      trainer.printResults();                            // Evaluate the final network for all training cases
+      network = trainer.getNetwork();                    // Retrieve trained network
 
       // Save network to file
       System.out.println("Enter the file that you'd like the resulting network to be printed in: ");
