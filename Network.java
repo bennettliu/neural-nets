@@ -266,39 +266,21 @@ public class Network
       double[] results = eval(trainingCase);
 
       double sum = 0;
-      double lastSum = 0;
+      double omega = 0;
       for (int layer = layers - 2; layer == layers - 2; layer--)
       {
-         if (layer == layers - 2) 
+         for (int i = 0; i < nodesInLayer[layer + 1]; i++)  // Destination
          {
-            for (int i = 0; i < nodesInLayer[layer + 1]; i++)  // Destination
+            if (layer == layers - 2) omega = (results[i] - truths[i]);
+            double trident = omega * activationVals[layer + 1][i];
+            sum += trident;
+            for (int j = 0; j < nodesInLayer[layer]; j++)   // Source
             {
-               double diff = (results[i] - truths[i]);
-               double capitalO = dotProduct(layer + 1, i);
-               double tridentI1 = diff * dThresholdF(capitalO);
-               sum += tridentI1;
-               for (int j = 0; j < nodesInLayer[layer]; j++)   // Source
-               {
-                  Dweights[layer][j][i] = activationVals[layer][j] * tridentI1;
-               }
+               Dweights[layer][j][i] = activationVals[layer][j] * trident;
             }
-         }  // if (layer == layers - 2) 
-         else
-         {
-            lastSum = sum;
-            sum = 0;
-            for (int k = 0; k < nodesInLayer[layer + 1]; k++)  // Destination
-            {
-               double OK = dotProduct(layer + 1, k);
-               double deltaK = lastSum;
-               double tridentK = deltaK * dThresholdF(OK);
-               sum += tridentK;
-               for (int m = 0; m < nodesInLayer[layer]; m++)   // Source
-               {
-                  Dweights[layer][m][k] = activationVals[layer][m] * tridentK;
-               }
-            }
-         }  // else
+         }
+         omega = sum;
+         sum = 0;
       }  // for (int layer = layers - 2; layer == layers - 2; layer--)
 
       return Dweights;
