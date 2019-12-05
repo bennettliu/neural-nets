@@ -265,22 +265,29 @@ public class Network
       double Dweights[][][] = new double[layers - 1][maxNodes][maxNodes];
       double[] results = eval(trainingCase);
 
-      double sum = 0;
-      double omega = 0;
-      for (int layer = layers - 2; layer == layers - 2; layer--)
+      double[] sum = new double[maxNodes];
+      double[] omega = new double[maxNodes];
+      for (int i = 0; i < nodesInLayer[layers - 1]; i++)
+         omega[i] = (results[i] - truths[i]);
+      
+      for (int layer = layers - 2; layer >= 0; layer--)
       {
          for (int i = 0; i < nodesInLayer[layer + 1]; i++)  // Destination
          {
-            if (layer == layers - 2) omega = (results[i] - truths[i]);
-            double trident = omega * activationVals[layer + 1][i];
-            sum += trident;
+            double dp = dotProduct(layer + 1, i);
+            double trident = omega[i] * dThresholdF(dp);
             for (int j = 0; j < nodesInLayer[layer]; j++)   // Source
             {
-               Dweights[layer][j][i] = activationVals[layer][j] * trident;
+               Dweights[layer][j][i] = activationVals[layer][j] * trident; // Set Dweights for current weight layer
+               sum[j] += trident * weights[layer][j][i];                   // Set omega for next round
             }
          }
-         omega = sum;
-         sum = 0;
+
+         for (int i = 0; i < nodesInLayer[layer]; i++)
+         {
+            omega[i] = sum[i];
+            sum[i] = 0;
+         }
       }  // for (int layer = layers - 2; layer == layers - 2; layer--)
 
       return Dweights;
