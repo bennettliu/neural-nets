@@ -2,7 +2,6 @@
  * Authored by Bennett Liu on Nov 18th, 2019
  */
 
-import java.util.*;
 import java.io.*;
 
 public class BMPNet 
@@ -14,7 +13,7 @@ public class BMPNet
       double trainingInputs[][];             // The inputs for each training case
       double trainingOutputs[][];            // The outputs for each training case
 
-      String fileName = "networks/Network_10x10.txt";
+      String fileName = "networks/Network5_10x10.txt";
       Network network = new Network(new File(fileName));
 
       PelGetter pelGetter = new PelGetter("10x10.bmp", "10x10out2.bmp");
@@ -27,7 +26,7 @@ public class BMPNet
       NetworkTrainer trainer = new NetworkTrainer(network, trainingInputs, trainingOutputs);    // Initialize trainer
 
       // Train the network with the given parameters
-      trainer.train(1, 2, 1000, 0, 0, 5, 100);
+      trainer.train(1.0, 1.0001, 1000000000, 0, 0, 10000, 100000);
       network = trainer.getNetwork();                    // Retrieve trained network
 
       outputs = network.eval(d);
