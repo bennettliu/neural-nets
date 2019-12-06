@@ -259,28 +259,29 @@ public class Network
     */
    public double[][][] getDErrors(double inputArray[], double[] expectedOutputs) 
    {
-      double dWeights[][][] = new double[layers - 1][maxNodes][maxNodes];
       double[] results = eval(inputArray);
-
-      double[] nextOmega = new double[maxNodes];
+      
+      double psi;
       double[] omega = new double[maxNodes];
-      for (int i = 0; i < nodesInLayer[layers - 1]; i++)                   // Initialize omega
+      double[] nextOmega = new double[maxNodes];
+      double dWeights[][][] = new double[layers - 1][maxNodes][maxNodes];
+
+      for (int i = 0; i < nodesInLayer[layers - 1]; i++)                   // Initialize omega array
          omega[i] = (results[i] - expectedOutputs[i]);
       
       for (int layer = layers - 2; layer >= 0; layer--)                    // Calculate dWeight with backpropagation
       {
-         for (int i = 0; i < nodesInLayer[layer + 1]; i++)                 // Destination node
+         for (int i = 0; i < nodesInLayer[layer + 1]; i++)                 // Current weight's destination node
          {
-            double dp = dotProduct(layer + 1, i); 
-            double trident = omega[i] * dThresholdF(dp);                   // Calculate trident
-            for (int j = 0; j < nodesInLayer[layer]; j++)                  // Source node
+            psi = omega[i] * dThresholdF(dotProduct(layer + 1, i));        // Calculate psi
+            for (int j = 0; j < nodesInLayer[layer]; j++)                  // Current weight's source node
             {
-               dWeights[layer][j][i] = activationVals[layer][j] * trident; // Set dWeights for current weight layer
-               nextOmega[j] += trident * weights[layer][j][i];             // Set omega for next round
+               dWeights[layer][j][i] = activationVals[layer][j] * psi;     // Set dWeights for current weight layer
+               nextOmega[j] += psi * weights[layer][j][i];                 // Set omega for next round
             }
          }
 
-         for (int i = 0; i < nodesInLayer[layer]; i++)
+         for (int i = 0; i < nodesInLayer[layer]; i++)                     // Update omega
          {
             omega[i] = nextOmega[i];
             nextOmega[i] = 0;
