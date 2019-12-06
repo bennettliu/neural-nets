@@ -1,19 +1,18 @@
 /*
  * Authored by Bennett Liu on September 18th, 2019
  * 
- * The main class takes console inputs defining the structure of the perceptron model, as found in Network.java to create 
+ * The main class takes console inputs defining the structure of the perceptron model, as found in Network.java, to create 
  * a perceptron with randomized weights. Takes console inputs specifying a training set. Then runs and prints the results of 
  * the model on the training set. It then takes inputs specifying training parameters and trains the model accordingly. 
- * When training is completed, it runs the model on the training set and prints the result.
- * 
- * Whether or not the model is trained, the resulting model is written to a specified file.
+ * When training is completed, it runs the model on the training set and prints the result. The resulting model is written 
+ * to a specified file.
  */
 
 import java.util.*;
 
 public class Main 
 {
-   public static void main(String[] args) 
+   public static void main(String[] args)
    {
       int inputNodes;                        // The number of inputs in the new network
       int hiddenLayers;                      // The number of hidden layers in the new network
@@ -52,7 +51,7 @@ public class Main
       hiddenLayers = in.nextInt();
 
       hiddenLayerNodes = new int[hiddenLayers];
-      for (int i = 1; i <= hiddenLayers; i++) 
+      for (int i = 1; i <= hiddenLayers; i++)
       {
          System.out.println(String.format("How many nodes in hidden layer %d: ", i));
          hiddenLayerNodes[i - 1] = in.nextInt();

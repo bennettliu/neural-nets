@@ -33,7 +33,7 @@ public class NetworkTrainer
    /*
     * The Network constructor creates a new NetworkTrainer, given a network and training inputs/outputs.
     */
-   public NetworkTrainer(Network initialNetwork, double inputs[][], double[][] outputs) 
+   public NetworkTrainer(Network initialNetwork, double inputs[][], double[][] outputs)
    {
       network = initialNetwork;
       trainingInputs = inputs;
@@ -47,7 +47,7 @@ public class NetworkTrainer
    /*
     * calcError returns the total error when the network is run for all input-output pairs.
     */
-   private double calcError() 
+   private double calcError()
    {
       double totalError = 0.0;
       double diff;
@@ -55,7 +55,7 @@ public class NetworkTrainer
       {
          double[] results = network.eval(trainingInputs[i]);         // Get results
 
-         for (int j = 0; j < network.outputs; j++)                    // Calculate error for given training case
+         for (int j = 0; j < network.outputs; j++)                   // Calculate error for given training case
          {
             diff = (trainingOutputs[i][j] - results[j]);
             totalError += (diff * diff);
@@ -64,7 +64,7 @@ public class NetworkTrainer
       totalError /= 2.0;                                             // This halving of error is specified in design doc 1.
 
       return totalError;
-   }  // private double calcError() 
+   }  // private double calcError()
 
    /*
     * train runs multiple steps while some conditions are still met.
@@ -90,13 +90,13 @@ public class NetworkTrainer
 
       System.out.println();                                                   // Print the reason(s) for termination
       System.out.println(String.format("Terminated after %d steps", step));
-      if (step >= maxSteps) 
+      if (step >= maxSteps)
          System.out.println(String.format("Steps passed limit of %d", maxSteps));
-      if (error < minError) 
+      if (error < minError)
          System.out.println(String.format("Error fell below %.15f", minError));
-      if (adaptConstant == 1 && !improved) 
+      if (adaptConstant == 1 && !improved)
          System.out.println("Was not able to improve error.");
-      if (trainingFactor < minLambda) 
+      if (trainingFactor < minLambda)
          System.out.println(String.format("Training factor (lambda) fell below %.15f", minLambda));
       System.out.println();
    }  // public void train(double initLambda, double adaptConst, int maxSteps, double minError, double minLambda, int updatePeriod, int writePeriod)
@@ -114,9 +114,9 @@ public class NetworkTrainer
 
       for (int layer = 0; layer < network.layers - 1; layer++)                   // Save old weights in case of roll back
       {
-         for (int i = 0; i < network.maxNodes; i++) 
+         for (int i = 0; i < network.maxNodes; i++)
          {
-            for (int j = 0; j < network.maxNodes; j++) 
+            for (int j = 0; j < network.maxNodes; j++)
             {
                oldWeights[layer][i][j] = network.weights[layer][i][j];
             }
@@ -147,16 +147,16 @@ public class NetworkTrainer
     * improve changes the network's weights by the training factor (lambda) multiplied by the partial derivatives 
     * of total error.
     */
-   private void improve(int trainingCase) 
+   private void improve(int trainingCase)
    {
       double dWeights[][][] = network.getDErrors(trainingInputs[trainingCase], trainingOutputs[trainingCase]);
       double newWeights[][][] = new double[network.layers - 1][network.maxNodes][network.maxNodes];
 
-      for (int layer = 0; layer < network.layers - 1; layer++) 
+      for (int layer = 0; layer < network.layers - 1; layer++)
       {
-         for (int i = 0; i < network.maxNodes; i++) 
+         for (int i = 0; i < network.maxNodes; i++)
          {
-            for (int j = 0; j < network.maxNodes; j++) 
+            for (int j = 0; j < network.maxNodes; j++)
             {
                newWeights[layer][i][j] = network.weights[layer][i][j] - (trainingFactor * dWeights[layer][i][j]);
             }
@@ -165,12 +165,12 @@ public class NetworkTrainer
       network.setWeights(newWeights);
 
       return;
-   }  // private void improve(int trainingCase) 
+   }  // private void improve(int trainingCase)
 
    /*
     * printResults prints the network's results for each input-output pair, the training factor, and total error.
     */
-   public void printResults() 
+   public void printResults()
    {
       System.out.println();
       for (int i = 0; i < trainingCases; i++)                              // For each training case
@@ -212,7 +212,7 @@ public class NetworkTrainer
    /*
     * getNetwork returns the current network.
     */
-   public Network getNetwork() 
+   public Network getNetwork()
    {
       return network;
    }

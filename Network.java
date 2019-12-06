@@ -1,7 +1,7 @@
 /*
  * Authored by Bennett Liu on September 18th, 2019
  * 
- * Network.java implements a configurable multi-layer feed-forward perceptron neural network. Network is configurable 
+ * Network.java implements a configurable multi-layer feed-forward perceptron neural network. The network is configurable 
  * for any positive number of layers, nodes, and any weight values.
  * 
  * Contains the following methods:
@@ -47,7 +47,7 @@ public class Network
     * The Network constructor creates a new Network with randomized weights, given the number of input nodes, 
     * nodes in each hidden layer, output nodes, and the bounds of randomization.
     */
-   public Network(int inputNodes, int hiddenLayerNodes[], int outputNodes, double minWeight, double maxWeight) 
+   public Network(int inputNodes, int hiddenLayerNodes[], int outputNodes, double minWeight, double maxWeight)
    { 
       layers = hiddenLayerNodes.length + 2;                    // Total layers is hidden layers + input + output layers
 
@@ -58,7 +58,7 @@ public class Network
 
       nodesInLayer = new int[layers];                          // Create nodesInLayer, the number of nodes in each layer
       nodesInLayer[inputIndex] = inputs;
-      for (int i = 1; i < layers - 1; i++) 
+      for (int i = 1; i < layers - 1; i++)
          nodesInLayer[i] = hiddenLayerNodes[i - 1];
       nodesInLayer[outputIndex] = outputs;
 
@@ -72,7 +72,7 @@ public class Network
    /*
     * The Network constructor loads a Network from a file describing its structure.
     */
-   public Network(File file) 
+   public Network(File file)
    {
       try 
       {
@@ -92,11 +92,11 @@ public class Network
          calcMaxNodes();                                          // Calculates the maximum nodes in each layer
 
          weights = new double[layers - 1][maxNodes][maxNodes];    // Initialize weights matrix
-         for (int layer = 0; layer < layers - 1; layer++) 
+         for (int layer = 0; layer < layers - 1; layer++)
          {
-            for (int i = 0; i < nodesInLayer[layer]; i++) 
+            for (int i = 0; i < nodesInLayer[layer]; i++)
             {
-               for (int j = 0; j < nodesInLayer[layer + 1]; j++) 
+               for (int j = 0; j < nodesInLayer[layer + 1]; j++)
                {
                   weights[layer][i][j] = scanner.nextDouble();
                }
@@ -131,22 +131,22 @@ public class Network
             writer.append(String.format("%d ", nodesInLayer[i]));
          writer.append("\n");
 
-         for (int layer = 0; layer < (layers - 1); layer++)                      // Print all weights
+         for (int layer = 0; layer < layers - 1; layer++)                      // Print all weights
          {
             writer.append("\n");
             for (int i = 0; i < nodesInLayer[layer]; i++)                        // Prints weights connecting layer m to m + 1
             {
-               for (int j = 0; j < nodesInLayer[layer + 1]; j++) 
+               for (int j = 0; j < nodesInLayer[layer + 1]; j++)
                {
                   writer.append(String.format("%.15f ", weights[layer][i][j]));
                }
                writer.append("\n");
             }
-         }  // for (int layer = 0; layer < (layers - 1); layer++)  
+         }  // for (int layer = 0; layer < layers - 1; layer++)
 
          writer.close();
       }  // try
-      catch (IOException e) 
+      catch (IOException e)
       {
          e.printStackTrace();
       }
@@ -160,7 +160,7 @@ public class Network
    private void calcMaxNodes()
    {
       maxNodes = 0;
-      for (int i = 0; i < layers; i++) 
+      for (int i = 0; i < layers; i++)
          maxNodes = Math.max(maxNodes, nodesInLayer[i]);
       
       return;
@@ -169,16 +169,16 @@ public class Network
    /*
     * initRandomizedWeights creates a new weight matrix and fills in randomized weight values, given a range.
     */
-   private void initRandomizedWeights(double minWeight, double maxWeight) 
+   private void initRandomizedWeights(double minWeight, double maxWeight)
    {
       weights = new double[layers - 1][maxNodes][maxNodes];
 
       Random random = new Random();                            // initialize all weights as random
-      for (int layer = 0; layer < (layers - 1); layer++) 
+      for (int layer = 0; layer < layers - 1; layer++)
       {
-         for (int i = 0; i < nodesInLayer[layer]; i++) 
+         for (int i = 0; i < nodesInLayer[layer]; i++)
          {
-            for (int j = 0; j < nodesInLayer[layer + 1]; j++) 
+            for (int j = 0; j < nodesInLayer[layer + 1]; j++)
             {
                weights[layer][i][j] = minWeight + (maxWeight - minWeight) * random.nextDouble();
             }
@@ -186,12 +186,12 @@ public class Network
       }
 
       return;
-   }  // private void initRandomizedWeights(double minWeight, double maxWeight) 
+   }  // private void initRandomizedWeights(double minWeight, double maxWeight)
 
    /*
     * initActivationVals creates a new activation values matrix.
     */
-   private void initActivationVals() 
+   private void initActivationVals()
    {
       activationVals = new double[layers][maxNodes];
       return;
@@ -200,9 +200,9 @@ public class Network
    /*
     * loadInputs initializes the input nodes' activation values, given an input array.
     */
-   private void loadInputs(double inputArray[]) 
+   private void loadInputs(double inputArray[])
    {
-      for (int i = 0; i < inputs; i++) 
+      for (int i = 0; i < inputs; i++)
          activationVals[inputIndex][i] = inputArray[i];
       return;
    }
@@ -210,7 +210,7 @@ public class Network
    /*
     * thresholdF returns the result of the threshold function used to determine a node's activation state. 
     */
-   private double thresholdF(double x) 
+   private double thresholdF(double x)
    {
       return 1.0 / (1.0 + Math.exp(-x));
    }
@@ -218,7 +218,7 @@ public class Network
    /*
     * dThresholdF returns the derivative of the function thresholdF
     */
-   private double dThresholdF(double x) 
+   private double dThresholdF(double x)
    {
       return thresholdF(x) * (1.0 - thresholdF(x));
    }
@@ -239,7 +239,7 @@ public class Network
    /*
     * eval evaluates and returns the output of the network, given an array of inputs.
     */
-   public double[] eval(double inputArray[]) 
+   public double[] eval(double inputArray[])
    {
       loadInputs(inputArray);
 
@@ -252,12 +252,12 @@ public class Network
       }
       
       return Arrays.copyOfRange(activationVals[outputIndex], 0, outputs);     // Return output values
-   }  // public double[] eval(double inputArray[]) 
+   }  // public double[] eval(double inputArray[])
 
    /*
     * getDErrors returns the partial derivative of the total error relative to each weight.
     */
-   public double[][][] getDErrors(double inputArray[], double[] expectedOutputs) 
+   public double[][][] getDErrors(double inputArray[], double[] expectedOutputs)
    {
       double[] results = eval(inputArray);
       
@@ -289,12 +289,12 @@ public class Network
       }  // for (int layer = layers - 2; layer >= 0; layer--)
 
       return dWeights;
-   }  // public double[][][] getDErrors(double inputArray[], double[] expectedOutputs) 
+   }  // public double[][][] getDErrors(double inputArray[], double[] expectedOutputs)
  
    /*
     * setWeights changes the network's weights to a given set of weights 
     */
-   public void setWeights(double newWeights[][][]) 
+   public void setWeights(double newWeights[][][])
    {
       weights = newWeights;
       return;
