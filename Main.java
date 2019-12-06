@@ -3,9 +3,7 @@
  * 
  * The main class takes console inputs defining the structure of the perceptron model, as found in Network.java to create 
  * a perceptron with randomized weights. Takes console inputs specifying a training set. Then runs and prints the results of 
- * the model on the training set. 
- * 
- * If the model has exactly one hidden layer, it takes inputs specifying training parameters and trains the model accordingly. 
+ * the model on the training set. It then takes inputs specifying training parameters and trains the model accordingly. 
  * When training is completed, it runs the model on the training set and prints the result.
  * 
  * Whether or not the model is trained, the resulting model is written to a specified file.
@@ -98,20 +96,20 @@ public class Main
       }  // for (int i = 1; i <= trainingCases; i++)
 
       // Create network with given parameters
-      Network network = new Network(inputNodes, hiddenLayerNodes, outputNodes, minWeight, maxWeight);    
+      Network network = new Network(inputNodes, hiddenLayerNodes, outputNodes, minWeight, maxWeight);
 
       NetworkTrainer trainer = new NetworkTrainer(network, trainingInputs, trainingOutputs);    // Initialize trainer
       trainer.printResults();                                        // Evaluate initial network for all training cases
 
       /*
-         * Read training case inputs, namely:
-         *
-         * The initial training factor
-         * The adaptive training constant
-         * The maximum number of steps
-         * The ceiling of the desired error
-         * The period of steps at which user is updated and saves will be executed
-         */
+       * Read training case inputs, namely:
+       *
+       * The initial training factor
+       * The adaptive training constant
+       * The maximum number of steps
+       * The ceiling of the desired error
+       * The period of steps at which user is updated and saves will be executed
+       */
       System.out.println("Initial Training Factor (Lambda): ");
       trainingFactor = in.nextDouble();
 
@@ -144,7 +142,7 @@ public class Main
       String outputFileName = in.next();
       network.exportNet(outputFileName);
       
-      in.close();          // Close scanner
+      in.close();                                        // Close scanner
 
       return;
    } // public static void main(String[] args)
