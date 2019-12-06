@@ -202,7 +202,7 @@ public class Network
     */
    private void loadInputs(double inputArray[]) 
    {
-      for (int i = 0; i < inputArray; i++) 
+      for (int i = 0; i < inputs; i++) 
          activationVals[inputIndex][i] = inputArray[i];
       return;
    }
