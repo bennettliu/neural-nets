@@ -22,6 +22,7 @@ import java.util.*;
 public class NetworkTrainer
 {
    Network network;              // The network to be trained
+   int trainingCases;            // The number of training cases
    double trainingInputs[][];    // The inputs to be trained on
    double trainingOutputs[][];   // The outputs to be trained on
 
@@ -37,6 +38,7 @@ public class NetworkTrainer
       network = initialNetwork;
       trainingInputs = inputs;
       trainingOutputs = outputs;
+      trainingCases = trainingInputs.length;
       error = calcError();
 
       return;
@@ -48,15 +50,15 @@ public class NetworkTrainer
    private double calcError() 
    {
       double totalError = 0.0;
-      double diff = 0.0;
-      for (int i = 0; i < trainingInputs.length; i++)
+      double diff;
+      for (int i = 0; i < trainingCases; i++)
       {
          double[] results = network.eval(trainingInputs[i]);         // Get results
 
-         for (int j = 0; j < results.length; j++)                    // Calculate error for given training case
+         for (int j = 0; j < network.outputs; j++)                    // Calculate error for given training case
          {
             diff = (trainingOutputs[i][j] - results[j]);
-            totalError += diff * diff;
+            totalError += (diff * diff);
          }
       }
       totalError /= 2.0;                                             // This halving of error is specified in design doc 1.
@@ -110,18 +112,18 @@ public class NetworkTrainer
       double newError;
       double oldWeights[][][] = new double[network.layers - 1][network.maxNodes][network.maxNodes];
 
-      for (int n = 0; n < network.weights.length; n++)                  // Save old weights in case of roll back
+      for (int layer = 0; layer < network.layers - 1; layer++)                   // Save old weights in case of roll back
       {
-         for (int i = 0; i < network.weights[0].length; i++) 
+         for (int i = 0; i < network.maxNodes; i++) 
          {
-            for (int j = 0; j < network.weights[0][0].length; j++) 
+            for (int j = 0; j < network.maxNodes; j++) 
             {
-               oldWeights[n][i][j] = network.weights[n][i][j];
+               oldWeights[layer][i][j] = network.weights[layer][i][j];
             }
          }
       }
 
-      for (int trainingCase = 0; trainingCase < trainingInputs.length; trainingCase++)  // Improve for each training case
+      for (int trainingCase = 0; trainingCase < trainingCases; trainingCase++)  // Improve for each training case
          improve(trainingCase);
          
       newError = calcError();                // Calculate the new error
@@ -142,21 +144,21 @@ public class NetworkTrainer
    }  // private boolean adaptiveImprove()
 
    /*
-    * improve decreases the network's weights by the training factor (lambda) multiplied by the partial derivatives 
+    * improve changes the network's weights by the training factor (lambda) multiplied by the partial derivatives 
     * of total error.
     */
    private void improve(int trainingCase) 
    {
-      double Dweights[][][] = network.getDErrors(trainingInputs[trainingCase], trainingOutputs[trainingCase]);
-
+      double dWeights[][][] = network.getDErrors(trainingInputs[trainingCase], trainingOutputs[trainingCase]);
       double newWeights[][][] = new double[network.layers - 1][network.maxNodes][network.maxNodes];
-      for (int n = 0; n < Dweights.length; n++) 
+
+      for (int layer = 0; layer < network.layers - 1; layer++) 
       {
-         for (int i = 0; i < Dweights[0].length; i++) 
+         for (int i = 0; i < network.maxNodes; i++) 
          {
-            for (int j = 0; j < Dweights[0][0].length; j++) 
+            for (int j = 0; j < network.maxNodes; j++) 
             {
-               newWeights[n][i][j] = network.weights[n][i][j] - (trainingFactor * Dweights[n][i][j]);
+               newWeights[layer][i][j] = network.weights[layer][i][j] - (trainingFactor * dWeights[layer][i][j]);
             }
          }
       }
@@ -171,34 +173,34 @@ public class NetworkTrainer
    public void printResults() 
    {
       System.out.println();
-      for (int i = 0; i < trainingInputs.length; i++)                      // For each training case
+      for (int i = 0; i < trainingCases; i++)                              // For each training case
       {
          System.out.println(String.format("Case %d:", i + 1));             // Print the number
 
-         System.out.println("Inputs:");                                      // Print the inputs
-         for (int j = 0; j < trainingInputs[0].length; j++)
+         System.out.println("Inputs:");                                    // Print the inputs
+         for (int j = 0; j < network.inputs; j++)
          {
             System.out.print(String.format(" %.15f", trainingInputs[i][j]));
          }
          System.out.println();
 
-         System.out.println("Results:");                                     // Calculate and print the network's outputs
+         System.out.println("Results:");                                   // Calculate and print the network's outputs
          double results[] = network.eval(trainingInputs[i]);
-         for (int j = 0; j < results.length; j++)
+         for (int j = 0; j < network.outputs; j++)
          {
             System.out.print(String.format(" %.15f", results[j]));
          }
          System.out.println();
 
-         System.out.println("Answers:");                                     // Calculate and print the correct outputs
-         for (int j = 0; j < trainingOutputs[0].length; j++)
+         System.out.println("Answers:");                                   // Calculate and print the correct outputs
+         for (int j = 0; j < network.outputs; j++)
          {
             System.out.print(String.format(" %.15f", trainingOutputs[i][j]));
          }
          System.out.println();
 
          System.out.println();
-      }  // for (int i = 0; i < trainingInputs.length; i++)
+      }  // for (int i = 0; i < trainingCases; i++)
 
       System.out.println(String.format("Lambda: %.15f", trainingFactor));  // Print the training factor
       System.out.println(String.format("Total Error: %.15f", error));      // Print the total error
