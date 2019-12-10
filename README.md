@@ -35,14 +35,16 @@ In these files, all values are separated by spaces or carriage returns. These fi
    *  For each case:
       *  The case's inputs (decimals)
       *  The case's outputs (decimals)
-*  **If 1 hidden layer:** Training Parameters
+*  Training Parameters
    *  The initial training factor, lambda (decimal)
    *  The adaptive training constant (decimal)
    *  The maximum number of steps (integer)
    *  The ceiling of the desired error (decimal)
    *  The lower limit of the training factor (decimal)
-   *  The period of steps at which user updates and the network is saved (integer)
-      *  If set ≤ 0.0, no updates/saves will occur
+   *  The period of steps at which updates are printed (integer)
+      *  If set = 0, no updates will occur
+   *  The period of steps at which the network is saved (integer)
+      *  If set = 0, no saves will occur
 *  Exporting
    *  The file where the network should be exported to. Usually `networks/DESCRIPTIVE_NAME.txt`.
 
