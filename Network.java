@@ -266,7 +266,7 @@ public class Network
       double[] nextOmega = new double[maxNodes];
       double dWeights[][][] = new double[layers - 1][maxNodes][maxNodes];
 
-      for (int i = 0; i < nodesInLayer[layers - 1]; i++)                   // Initialize omega array
+      for (int i = 0; i < nodesInLayer[layers - 1]; i++)                   // Initialize omega array for last weight layer
          omega[i] = (results[i] - expectedOutputs[i]);
       
       for (int layer = layers - 2; layer >= 0; layer--)                    // Calculate dWeight with backpropagation
