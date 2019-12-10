@@ -9,15 +9,15 @@ public class BMPNet
    public static void main(String[] args) 
    {
       int inputNodes = 100;
-      double outputs[];                // The outputs for each test case
+      double outputs[];                      // The outputs for each test case
       double trainingInputs[][];             // The inputs for each training case
       double trainingOutputs[][];            // The outputs for each training case
 
       String fileName = "networks/Network5_10x10.txt";
       Network network = new Network(new File(fileName));
 
-      PelGetter pelGetter = new PelGetter("10x10.bmp", "10x10out2.bmp");
-      double d[] = pelGetter.getPels();
+      PelGetter pelGetter = new PelGetter();
+      double d[] = pelGetter.getPels("10x10.bmp");
       trainingInputs = new double[1][inputNodes];
       trainingOutputs = new double[1][inputNodes];
       trainingInputs[0] = d;
@@ -30,8 +30,6 @@ public class BMPNet
       network = trainer.getNetwork();                    // Retrieve trained network
 
       outputs = network.eval(d);
-
-      pelGetter.makeBMP(outputs);
 
       return;
    } // public static void main(String[] args)
