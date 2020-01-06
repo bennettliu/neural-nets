@@ -41,6 +41,7 @@ public class Network
    int outputIndex;           // The index of the output layer
 
    double weights[][][];      // Weight in model for [layer][leftNode][rightNode]
+   double dotVals[][];        // Dot product values in model for [layer][node]
    double activationVals[][]; // Activation value in model for [layer][node]
 
    /*
@@ -193,6 +194,7 @@ public class Network
     */
    private void initActivationVals()
    {
+      dotVals = new double[layers][maxNodes];
       activationVals = new double[layers][maxNodes];
       return;
    }
@@ -247,44 +249,47 @@ public class Network
       {
          for (int i = 0; i < nodesInLayer[layer]; i++)
          {
-            activationVals[layer][i] = thresholdF(dotProduct(layer, i));      // Calculate activation value
+            dotVals[layer][i] = dotProduct(layer, i);
+            activationVals[layer][i] = thresholdF(dotVals[layer][i]);      // Calculate activation value
          }
       }
       
       return Arrays.copyOfRange(activationVals[outputIndex], 0, outputs);     // Return output values
    }  // public double[] eval(double inputArray[])
 
+   public double[] eval(String filename)
+   { 
+      PelGetter pelGetter = new PelGetter();
+      double inputArray[] = pelGetter.getPels(filename);
+      return eval(inputArray);
+   } 
+
    /*
     * getDErrors returns the partial derivative of the total error relative to each weight.
     */
-   public double[][][] getDErrors(double inputArray[], double[] expectedOutputs)
+   public double[][][] getDErrors(double inputArray[], double expectedOutputs[])
    {
-      double[] results = eval(inputArray);
+      double results[] = eval(inputArray);
       
-      double psi;
-      double[] omega = new double[maxNodes];
-      double[] nextOmega = new double[maxNodes];
+      double psi[] = new double[maxNodes];
+      double omega[][] = new double[layers][maxNodes];
       double dWeights[][][] = new double[layers - 1][maxNodes][maxNodes];
 
-      for (int i = 0; i < nodesInLayer[layers - 1]; i++)                   // Initialize omega array for last weight layer
-         omega[i] = (results[i] - expectedOutputs[i]);
-      
-      for (int layer = layers - 2; layer >= 0; layer--)                    // Calculate dWeight with backpropagation
-      {
-         for (int i = 0; i < nodesInLayer[layer + 1]; i++)                 // Current weight's destination node
-         {
-            psi = omega[i] * dThresholdF(dotProduct(layer + 1, i));        // Calculate psi
-            for (int j = 0; j < nodesInLayer[layer]; j++)                  // Current weight's source node
-            {
-               dWeights[layer][j][i] = activationVals[layer][j] * psi;     // Set dWeights for current weight layer
-               nextOmega[j] += psi * weights[layer][j][i];                 // Set omega for next round
-            }
-         }
+      // Initialize last layer omega values
+      for (int i = 0; i < nodesInLayer[layers - 1]; i++)
+         omega[layers - 1][i] = (results[i] - expectedOutputs[i]);
 
-         for (int i = 0; i < nodesInLayer[layer]; i++)                     // Update omega
+      // Evaluate all other weight layers
+      for (int layer = layers - 2; layer >= 0; layer--)                          // Calculate dWeight with backpropagation
+      {
+         for (int j = 0; j < nodesInLayer[layer + 1]; j++)                       // Current weight's destination node
          {
-            omega[i] = nextOmega[i];
-            nextOmega[i] = 0;
+            psi[j] = omega[layer + 1][j] * dThresholdF(dotVals[layer + 1][j]);   // Calculate psi
+            for (int i = 0; i < nodesInLayer[layer]; i++)                        // Current weight's source node
+            {
+               dWeights[layer][i][j] = activationVals[layer][i] * psi[j];        // Set dWeights for current weight layer
+               omega[layer][i] += psi[j] * weights[layer][i][j];                 // Set omega for next round
+            }
          }
       }  // for (int layer = layers - 2; layer >= 0; layer--)
 
