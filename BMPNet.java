@@ -1,5 +1,5 @@
 /*
- * Authored by Bennett Liu on Nov 18th, 2019
+ * Authored by Bennett Liu on November 18th, 2019
  */
 
 import java.io.*;
@@ -8,28 +8,17 @@ public class BMPNet
 {
    public static void main(String[] args) 
    {
-      int inputNodes = 100;
-      double outputs[];                      // The outputs for each test case
-      double trainingInputs[][];             // The inputs for each training case
-      double trainingOutputs[][];            // The outputs for each training case
-
       String fileName = "networks/Network5_10x10.txt";
       Network network = new Network(new File(fileName));
 
-      PelGetter pelGetter = new PelGetter();
-      double d[] = pelGetter.getPels("10x10.bmp");
-      trainingInputs = new double[1][inputNodes];
-      trainingOutputs = new double[1][inputNodes];
-      trainingInputs[0] = d;
-      trainingOutputs[0] = d;
+      String inputImages[] = new String[]{"10x10.bmp"};
+      String outputImages[] = new String[]{"10x10.bmp"};
 
-      NetworkTrainer trainer = new NetworkTrainer(network, trainingInputs, trainingOutputs);    // Initialize trainer
+      NetworkTrainer trainer = new NetworkTrainer(network, inputImages, outputImages);    // Initialize trainer
 
       // Train the network with the given parameters
       trainer.train(1.0, 1.0001, 1000000000, 0, 0, 10000, 100000);
       network = trainer.getNetwork();                    // Retrieve trained network
-
-      outputs = network.eval(d);
 
       return;
    } // public static void main(String[] args)
