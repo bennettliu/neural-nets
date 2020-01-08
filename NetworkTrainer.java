@@ -158,7 +158,7 @@ public class NetworkTrainer
          }
       }
       for (int trainingCase = 0; trainingCase < trainingCases; trainingCase++)  // Improve for each training case
-         network.getDErrors(trainingInputs[trainingCase], trainingOutputs[trainingCase], trainingFactor);
+         network.step(trainingInputs[trainingCase], trainingOutputs[trainingCase], trainingFactor);
 
       newError = calcError();                // Calculate the new error
       if (newError < error)                  // If steps improved error

@@ -19,7 +19,7 @@
  * dThresholdF             |  The derivative of the threshold function.
  * dotProduct              |  Calculates the dot product for node (n, i)'s input values.
  * eval                    |  Evaluates the network, given an array of inputs.
- * getDErrors              |  Finds the partial derivatives relative to the weights of a given case's total error.
+ * step                    |  step trains the network using steepest descent, given a training case.
  * setWeights              |  Sets the weights to a given matrix.
  */
 
@@ -265,15 +265,14 @@ public class Network
    } 
 
    /*
-    * getDErrors returns the partial derivative of the total error relative to each weight.
+    * step trains the network using steepest descent, given a training case.
     */
-   public double[][][] getDErrors(double inputArray[], double expectedOutputs[], double lambda)
+   public void step(double inputArray[], double expectedOutputs[], double lambda)
    {
       double results[] = eval(inputArray);
       
       double psi[] = new double[maxNodes];
       double omega[][] = new double[layers][maxNodes];
-      double dWeights[][][] = new double[layers - 1][maxNodes][maxNodes];
 
       // Initialize last layer omega values
       for (int i = 0; i < nodesInLayer[layers - 1]; i++)
@@ -287,15 +286,14 @@ public class Network
             psi[j] = omega[layer + 1][j] * dThresholdF(dotVals[layer + 1][j]);   // Calculate psi
             for (int i = 0; i < nodesInLayer[layer]; i++)                        // Current weight's source node
             {
-               dWeights[layer][i][j] = activationVals[layer][i] * psi[j];        // Set dWeights for current weight layer
                omega[layer][i] += psi[j] * weights[layer][i][j];                 // Set omega for next round
-               weights[layer][i][j] -= lambda * dWeights[layer][i][j];
+               weights[layer][i][j] -= lambda * activationVals[layer][i] * psi[j];
             }
          }
       }  // for (int layer = layers - 2; layer >= 0; layer--)
 
-      return dWeights;
-   }  // public double[][][] getDErrors(double inputArray[], double expectedOutputs[], double lambda)
+      return;
+   }  // public void step(double inputArray[], double expectedOutputs[], double lambda)
  
    /*
     * setWeights changes the network's weights to a given set of weights 
