@@ -12,7 +12,6 @@
  * calcError               |  Calculates the total error for the whole training set.
  * train                   |  Runs training steps while certain conditions are met.
  * adaptiveImprove         |  Runs adaptive training
- * improve                 |  Makes a step for a given training case.
  * printResults            |  Prints information on each training case.
  * getNetwork              |  Returns the current network.
  */
@@ -144,7 +143,7 @@ public class NetworkTrainer
     */
    private boolean adaptiveImprove(double minLambda)
    {
-      boolean improved = false;
+      boolean improved;
       double newError = 0.0;
       double oldWeights[][][] = new double[network.layers - 1][network.maxNodes][network.maxNodes];
 
@@ -158,76 +157,25 @@ public class NetworkTrainer
             }
          }
       }
-      double dWeights[][][][] = new double[trainingCases][network.layers][network.maxNodes][network.maxNodes];
       for (int trainingCase = 0; trainingCase < trainingCases; trainingCase++)  // Improve for each training case
-         dWeights[trainingCase] = network.getDErrors(trainingInputs[trainingCase], trainingOutputs[trainingCase]);
+         network.getDErrors(trainingInputs[trainingCase], trainingOutputs[trainingCase], trainingFactor);
 
+      newError = calcError();                // Calculate the new error
+      if (newError < error)                  // If steps improved error
+      {
+         error = newError;                   // Update error
+         trainingFactor *= adaptConstant;    // Make a bigger step next time
+         improved = true;
+      }
+      else                                   // If steps worsened error
+      {
+         network.setWeights(oldWeights);     // Roll back weights
+         trainingFactor /= adaptConstant;    // Make a smaller step next time
+         improved = false;
+      }
 
-      if (adaptConstant == 1) 
-      {
-         for (int trainingCase = 0; trainingCase < trainingCases; trainingCase++)  // Improve for each training case
-            improve(trainingCase, dWeights[trainingCase]);
-         if (newError < error)                  // If steps improved error
-         {
-            error = newError;                   // Update error
-            improved = true;
-         }
-         else                                   // If steps worsened error
-         {
-            network.setWeights(oldWeights);     // Roll back weights
-            improved = false;
-         }
-      }
-      else 
-      {
-         while ((trainingFactor >= minLambda) && !improved)
-         {
-            System.out.println(trainingFactor);
-            for (int trainingCase = 0; trainingCase < trainingCases; trainingCase++)  // Improve for each training case
-               improve(trainingCase, dWeights[trainingCase]);
-               
-            newError = calcError();                // Calculate the new error
-            if (newError < error)                  // If steps improved error
-            {
-               error = newError;                   // Update error
-               trainingFactor *= adaptConstant;    // Make a bigger step next time
-               improved = true;
-            }
-            else                                   // If steps worsened error
-            {
-               network.setWeights(oldWeights);     // Roll back weights
-               trainingFactor /= adaptConstant;    // Make a smaller step next time
-               improved = false;
-            }
-         }
-      }
-      
       return improved;                       // Return whether the error improved
-   }  // private boolean adaptiveImprove()
-
-   /*
-    * improve changes the network's weights by the training factor (lambda) multiplied by the partial derivatives 
-    * of total error.
-    */
-   private void improve(int trainingCase, double dWeights[][][])
-   {
-      // double dWeights[][][] = network.getDErrors(trainingInputs[trainingCase], trainingOutputs[trainingCase]);
-      double newWeights[][][] = new double[network.layers - 1][network.maxNodes][network.maxNodes];
-
-      for (int layer = 0; layer < network.layers - 1; layer++)
-      {
-         for (int i = 0; i < network.maxNodes; i++)
-         {
-            for (int j = 0; j < network.maxNodes; j++)
-            {
-               newWeights[layer][i][j] = network.weights[layer][i][j] - (trainingFactor * dWeights[layer][i][j]);
-            }
-         }
-      }
-      network.setWeights(newWeights);
-
-      return;
-   }  // private void improve(int trainingCase)
+   }  // private boolean adaptiveImprove(double minLambda)
 
    /*
     * printResults prints the network's results for each input-output pair, the training factor, and total error.

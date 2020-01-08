@@ -267,7 +267,7 @@ public class Network
    /*
     * getDErrors returns the partial derivative of the total error relative to each weight.
     */
-   public double[][][] getDErrors(double inputArray[], double expectedOutputs[])
+   public double[][][] getDErrors(double inputArray[], double expectedOutputs[], double lambda)
    {
       double results[] = eval(inputArray);
       
@@ -278,7 +278,7 @@ public class Network
       // Initialize last layer omega values
       for (int i = 0; i < nodesInLayer[layers - 1]; i++)
          omega[layers - 1][i] = (results[i] - expectedOutputs[i]);
-
+         
       // Evaluate all other weight layers
       for (int layer = layers - 2; layer >= 0; layer--)                          // Calculate dWeight with backpropagation
       {
@@ -289,12 +289,13 @@ public class Network
             {
                dWeights[layer][i][j] = activationVals[layer][i] * psi[j];        // Set dWeights for current weight layer
                omega[layer][i] += psi[j] * weights[layer][i][j];                 // Set omega for next round
+               weights[layer][i][j] -= lambda * dWeights[layer][i][j];
             }
          }
       }  // for (int layer = layers - 2; layer >= 0; layer--)
 
       return dWeights;
-   }  // public double[][][] getDErrors(double inputArray[], double[] expectedOutputs)
+   }  // public double[][][] getDErrors(double inputArray[], double expectedOutputs[], double lambda)
  
    /*
     * setWeights changes the network's weights to a given set of weights 
