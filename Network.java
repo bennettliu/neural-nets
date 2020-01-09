@@ -269,28 +269,46 @@ public class Network
     */
    public void step(double inputArray[], double expectedOutputs[], double lambda)
    {
+      int layer;
+      double psi;
+      double omega[][] = new double[layers][maxNodes];
       double results[] = eval(inputArray);
       
-      double psi[] = new double[maxNodes];
-      double omega[][] = new double[layers][maxNodes];
-
-      // Initialize last layer omega values
-      for (int i = 0; i < nodesInLayer[layers - 1]; i++)
-         omega[layers - 1][i] = (results[i] - expectedOutputs[i]);
-         
-      // Evaluate all other weight layers
-      for (int layer = layers - 2; layer >= 0; layer--)                          // Calculate dWeight with backpropagation
+      layer = layers - 2;
+      for (int j = 0; j < nodesInLayer[layer + 1]; j++)                          // Current weight's destination node
+      {
+         psi = (results[j] - expectedOutputs[j]) * dThresholdF(dotVals[layer + 1][j]);   // Calculate psi
+         for (int i = 0; i < nodesInLayer[layer]; i++)                           // Current weight's source node
+         {
+            omega[layer][i] += psi * weights[layer][i][j];                    // Set omega for next round
+            weights[layer][i][j] -= lambda * activationVals[layer][i] * psi;
+         }
+      }
+      
+      // Evaluate all hidden weight layers
+      for (layer = layers - 3; layer >= 1; layer--)                              // Calculate dWeight with backpropagation
       {
          for (int j = 0; j < nodesInLayer[layer + 1]; j++)                       // Current weight's destination node
          {
-            psi[j] = omega[layer + 1][j] * dThresholdF(dotVals[layer + 1][j]);   // Calculate psi
+            psi = omega[layer + 1][j] * dThresholdF(dotVals[layer + 1][j]);   // Calculate psi
             for (int i = 0; i < nodesInLayer[layer]; i++)                        // Current weight's source node
             {
-               omega[layer][i] += psi[j] * weights[layer][i][j];                 // Set omega for next round
-               weights[layer][i][j] -= lambda * activationVals[layer][i] * psi[j];
+               omega[layer][i] += psi * weights[layer][i][j];                 // Set omega for next round
+               weights[layer][i][j] -= lambda * activationVals[layer][i] * psi;
             }
          }
-      }  // for (int layer = layers - 2; layer >= 0; layer--)
+      }  // for (layer = layers - 3; layer >= 1; layer--)
+
+      // Evaluate first weight layer
+      layer = 0;
+      for (int j = 0; j < nodesInLayer[layer + 1]; j++)                       // Current weight's destination node
+      {
+         psi = omega[layer + 1][j] * dThresholdF(dotVals[layer + 1][j]);   // Calculate psi
+         for (int i = 0; i < nodesInLayer[layer]; i++)                        // Current weight's source node
+         {
+            weights[layer][i][j] -= lambda * activationVals[layer][i] * psi;
+         }
+      }
 
       return;
    }  // public void step(double inputArray[], double expectedOutputs[], double lambda)
