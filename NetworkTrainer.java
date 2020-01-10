@@ -9,6 +9,8 @@
  * Method                  |  Description
  * ------------------------|---------------------
  * NetworkTrainer          |  A constructor for creating a Network, given a network and a training set of doubles.
+ * NetworkTrainer          |  A constructor for creating a Network, given a network and a training set of image inputs and double outputs.	
+ * NetworkTrainer          |  A constructor for creating a Network, given a network and a training set of images.
  * calcError               |  Calculates the total error for the whole training set.
  * train                   |  Runs training steps while certain conditions are met.
  * adaptiveImprove         |  Runs adaptive training
@@ -41,6 +43,48 @@ public class NetworkTrainer
       error = calcError();
 
       return;
+   }
+
+   /*	
+    * The Network constructor creates a new NetworkTrainer, given a network, image file name training inputs, and double training outputs.	
+    */	
+   public NetworkTrainer(Network initialNetwork, String inputFilenames[], double outputs[][])	
+   {	
+      PelGetter pelGetter = new PelGetter();	
+
+      network = initialNetwork;	
+      trainingCases = inputFilenames.length;	
+      trainingInputs = new double[trainingCases][network.inputs];	
+      for (int i = 0; i < trainingCases; i++)	
+      {	
+         trainingInputs[i] = pelGetter.getPels(inputFilenames[i]);	
+      }	
+      trainingOutputs = outputs;	
+      error = calcError();	
+
+      return;	
+   }	
+ 
+    /*	
+     * The Network constructor creates a new NetworkTrainer, given a network and image file name training inputs/outputs.	
+     */	
+   public NetworkTrainer(Network initialNetwork, String inputFilenames[], String outputFilenames[])	
+   {	
+      PelGetter pelGetter = new PelGetter();	
+
+      network = initialNetwork;	
+      trainingCases = inputFilenames.length;	
+
+      trainingInputs = new double[trainingCases][network.inputs];	
+      trainingOutputs = new double[trainingCases][network.inputs];	
+      for (int i = 0; i < trainingCases; i++)	
+      {	
+         trainingInputs[i] = pelGetter.getPels(inputFilenames[i]);	
+         trainingOutputs[i] = pelGetter.getPels(outputFilenames[i]);	
+      }	
+      error = calcError();	
+
+      return;	
    }
 
    /*
