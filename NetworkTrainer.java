@@ -9,8 +9,6 @@
  * Method                  |  Description
  * ------------------------|---------------------
  * NetworkTrainer          |  A constructor for creating a Network, given a network and a training set of doubles.
- * NetworkTrainer          |  A constructor for creating a Network, given a network and a training set of image inputs and double outputs.
- * NetworkTrainer          |  A constructor for creating a Network, given a network and a training set of images.
  * calcError               |  Calculates the total error for the whole training set.
  * train                   |  Runs training steps while certain conditions are met.
  * adaptiveImprove         |  Runs adaptive training
@@ -46,48 +44,6 @@ public class NetworkTrainer
    }
 
    /*
-    * The Network constructor creates a new NetworkTrainer, given a network, image file name training inputs, and double training outputs.
-    */
-   public NetworkTrainer(Network initialNetwork, String inputFilenames[], double outputs[][])
-   {
-      PelGetter pelGetter = new PelGetter();
-
-      network = initialNetwork;
-      trainingCases = inputFilenames.length;
-      trainingInputs = new double[trainingCases][network.inputs];
-      for (int i = 0; i < trainingCases; i++)
-      {
-         trainingInputs[i] = pelGetter.getPels(inputFilenames[i]);
-      }
-      trainingOutputs = outputs;
-      error = calcError();
-
-      return;
-   }
-
-   /*
-    * The Network constructor creates a new NetworkTrainer, given a network and image file name training inputs/outputs.
-    */
-   public NetworkTrainer(Network initialNetwork, String inputFilenames[], String outputFilenames[])
-   {
-      PelGetter pelGetter = new PelGetter();
-
-      network = initialNetwork;
-      trainingCases = inputFilenames.length;
-
-      trainingInputs = new double[trainingCases][network.inputs];
-      trainingOutputs = new double[trainingCases][network.inputs];
-      for (int i = 0; i < trainingCases; i++)
-      {
-         trainingInputs[i] = pelGetter.getPels(inputFilenames[i]);
-         trainingOutputs[i] = pelGetter.getPels(outputFilenames[i]);
-      }
-      error = calcError();
-      
-      return;
-   }
-
-   /*
     * calcError returns the total error when the network is run for all input-output pairs.
     */
    private double calcError()
@@ -96,15 +52,15 @@ public class NetworkTrainer
       double diff;
       for (int i = 0; i < trainingCases; i++)
       {
-         double[] results = network.eval(trainingInputs[i]);         // Get results
+         double[] results = network.eval(trainingInputs[i]);   // Get results
 
-         for (int j = 0; j < network.outputs; j++)                   // Calculate error for given training case
+         for (int j = 0; j < network.outputs; j++)             // Calculate error for given training case
          {
             diff = (trainingOutputs[i][j] - results[j]);
             totalError += (diff * diff);
          }
       }
-      totalError /= 2.0;                                             // This halving of error is specified in design doc 1.
+      totalError /= 2.0;                                       // This halving of error is specified in design doc 1.
 
       return totalError;
    }  // private double calcError()
@@ -123,7 +79,7 @@ public class NetworkTrainer
       {
          step++;
 
-         improved = adaptiveImprove(minLambda);                                        // Run an adaptive step and save the result
+         improved = adaptiveImprove(minLambda);                               // Run an adaptive step and save the result
 
          if ((updatePeriod > 0) && ((step % updatePeriod) == 0))              // Saves and prints output every updatePeriod steps
             printResults();
