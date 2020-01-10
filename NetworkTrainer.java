@@ -113,9 +113,9 @@ public class NetworkTrainer
 
       for (int layer = 0; layer < network.layers - 1; layer++)                   // Save old weights in case of roll back
       {
-         for (int i = 0; i < network.maxNodes; i++)
+         for (int i = 0; i < network.nodesInLayer[layer]; i++)
          {
-            for (int j = 0; j < network.maxNodes; j++)
+            for (int j = 0; j < network.nodesInLayer[layer + 1]; j++)
             {
                oldWeights[layer][i][j] = network.weights[layer][i][j];
             }
