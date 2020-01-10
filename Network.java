@@ -265,7 +265,7 @@ public class Network
    { 
       PelGetter pelGetter = new PelGetter();
       double inputArray[] = pelGetter.getPels(filename);
-      return eval(inputArray);
+      return eval(inputArray);                           // Calls eval on extracted double inputs
    } 
 
    /*
@@ -279,7 +279,7 @@ public class Network
       double results[] = eval(inputArray);
       
       // Evaluate and update last weight layer
-      layer = layers - 2;
+      layer = layers - 2;                                                              // layers - 2 gives the last weight layer
       for (int j = 0; j < nodesInLayer[layer + 1]; j++)                                // Current weight's destination node
       {
          psi = (results[j] - expectedOutputs[j]) * dThresholdF(dotVals[layer + 1][j]); // Calculate psi
@@ -305,7 +305,7 @@ public class Network
       }  // for (layer = layers - 3; layer >= 1; layer--)
 
       // Update first weight layer
-      layer = 0;
+      layer = 0;                                                                       // 0 is the first weight layer
       for (int j = 0; j < nodesInLayer[layer + 1]; j++)                                // Current weight's destination node
       {
          psi = omega[layer + 1][j] * dThresholdF(dotVals[layer + 1][j]);               // Calculate psi
