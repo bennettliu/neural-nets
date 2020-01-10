@@ -20,7 +20,7 @@
  * dotProduct              |  Calculates the dot product for node (n, i)'s input values.
  * eval                    |  Evaluates the network, given an array of inputs.
  * eval                    |  Evaluates the network, given an image file name.
- * step                    |  step trains the network using steepest descent, given a training case.
+ * step                    |  Trains the network using steepest descent, given a training case.
  * setWeights              |  Sets the weights to a given matrix.
  */
 
@@ -28,7 +28,7 @@ import java.util.*;
 import java.io.*;
 
 /*
- * The Network class defines the feed-forward multi-layer neural network and provides methods to evaluate it.
+ * The Network class defines a feed-forward multi-layer neural network and provides methods to evaluate it.
  */
 public class Network 
 {
@@ -51,22 +51,22 @@ public class Network
     */
    public Network(int inputNodes, int hiddenLayerNodes[], int outputNodes, double minWeight, double maxWeight)
    { 
-      layers = hiddenLayerNodes.length + 2;                    // Total layers is hidden layers + input + output layers
+      layers = hiddenLayerNodes.length + 2;           // Total layers is hidden layers + input + output layers
 
-      inputIndex = 0;                                          // Input layer index is always 0
-      inputs = inputNodes;                                     // Get nodes in input layer
-      outputIndex = layers - 1;                                // Output layer index is always last index
-      outputs = outputNodes;                                   // Get nodes in output layer
+      inputIndex = 0;                                 // Input layer index is always 0
+      inputs = inputNodes;                            // Get nodes in input layer
+      outputIndex = layers - 1;                       // Output layer index is always last index
+      outputs = outputNodes;                          // Get nodes in output layer
 
-      nodesInLayer = new int[layers];                          // Create nodesInLayer, the number of nodes in each layer
+      nodesInLayer = new int[layers];                 // Create nodesInLayer, the number of nodes in each layer
       nodesInLayer[inputIndex] = inputs;
       for (int i = 1; i < layers - 1; i++)
          nodesInLayer[i] = hiddenLayerNodes[i - 1];
       nodesInLayer[outputIndex] = outputs;
 
-      calcMaxNodes();                                          // Calculates the maximum nodes in each layer
-      initRandomizedWeights(minWeight, maxWeight);             // Initialize weights matrix
-      initActivationVals();                                    // Initialize activation matrix
+      calcMaxNodes();                                 // Calculates the maximum nodes in each layer
+      initRandomizedWeights(minWeight, maxWeight);    // Initialize weights matrix
+      initActivationVals();                           // Initialize activation matrix
 
       return;
    }  // public Network(int inputNodes, int hiddenLayerNodes[], int outputNodes, double minWeight, double maxWeight)
@@ -133,7 +133,7 @@ public class Network
             writer.append(String.format("%d ", nodesInLayer[i]));
          writer.append("\n");
 
-         for (int layer = 0; layer < layers - 1; layer++)                      // Print all weights
+         for (int layer = 0; layer < layers - 1; layer++)                        // Print all weights
          {
             writer.append("\n");
             for (int i = 0; i < nodesInLayer[layer]; i++)                        // Prints weights connecting layer m to m + 1
@@ -251,7 +251,7 @@ public class Network
          for (int i = 0; i < nodesInLayer[layer]; i++)
          {
             dotVals[layer][i] = dotProduct(layer, i);
-            activationVals[layer][i] = thresholdF(dotVals[layer][i]);      // Calculate activation value
+            activationVals[layer][i] = thresholdF(dotVals[layer][i]);         // Calculate activation value
          }
       }
       
@@ -278,7 +278,7 @@ public class Network
       double omega[][] = new double[layers][maxNodes];
       double results[] = eval(inputArray);
       
-      // Evaluate last weight layer
+      // Evaluate and update last weight layer
       layer = layers - 2;
       for (int j = 0; j < nodesInLayer[layer + 1]; j++)                                // Current weight's destination node
       {
@@ -286,12 +286,12 @@ public class Network
          for (int i = 0; i < nodesInLayer[layer]; i++)                                 // Current weight's source node
          {
             omega[layer][i] += psi * weights[layer][i][j];                             // Set omega for next round
-            weights[layer][i][j] -= lambda * activationVals[layer][i] * psi;
+            weights[layer][i][j] -= lambda * activationVals[layer][i] * psi;           // Update weights
          }
       }
       
-      // Evaluate all middle weight layers
-      for (layer = layers - 3; layer >= 1; layer--)                                    // Calculate dWeight with backpropagation
+      // Evaluate and update all middle weight layers
+      for (layer = layers - 3; layer >= 1; layer--)
       {
          for (int j = 0; j < nodesInLayer[layer + 1]; j++)                             // Current weight's destination node
          {
@@ -299,7 +299,7 @@ public class Network
             for (int i = 0; i < nodesInLayer[layer]; i++)                              // Current weight's source node
             {
                omega[layer][i] += psi * weights[layer][i][j];                          // Set omega for next round
-               weights[layer][i][j] -= lambda * activationVals[layer][i] * psi;
+               weights[layer][i][j] -= lambda * activationVals[layer][i] * psi;        // Update weights
             }
          }
       }  // for (layer = layers - 3; layer >= 1; layer--)
@@ -311,7 +311,7 @@ public class Network
          psi = omega[layer + 1][j] * dThresholdF(dotVals[layer + 1][j]);               // Calculate psi
          for (int i = 0; i < nodesInLayer[layer]; i++)                                 // Current weight's source node
          {
-            weights[layer][i][j] -= lambda * activationVals[layer][i] * psi;
+            weights[layer][i][j] -= lambda * activationVals[layer][i] * psi;           // Update weights
          }
       }
 
