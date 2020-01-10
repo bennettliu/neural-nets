@@ -107,7 +107,9 @@ public class Main
        * The adaptive training constant
        * The maximum number of steps
        * The ceiling of the desired error
-       * The period of steps at which user is updated and saves will be executed
+       * The minimum value for the training factor
+       * The period of steps at which user is updated via console output
+       * The period of steps at which a log of the network is saved
        */
       System.out.println("Initial Training Factor (Lambda): ");
       trainingFactor = in.nextDouble();

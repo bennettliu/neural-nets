@@ -8,7 +8,9 @@
  * 
  * Method                  |  Description
  * ------------------------|---------------------
- * NetworkTrainer          |  A constructor for creating a Network, given a network and a training set.
+ * NetworkTrainer          |  A constructor for creating a Network, given a network and a training set of doubles.
+ * NetworkTrainer          |  A constructor for creating a Network, given a network and a training set of image inputs and double outputs.
+ * NetworkTrainer          |  A constructor for creating a Network, given a network and a training set of images.
  * calcError               |  Calculates the total error for the whole training set.
  * train                   |  Runs training steps while certain conditions are met.
  * adaptiveImprove         |  Runs adaptive training
@@ -30,7 +32,7 @@ public class NetworkTrainer
    double adaptConstant;         // The adaptive factor, used to modify lambda
 
    /*
-    * The Network constructor creates a new NetworkTrainer, given a network and training inputs/outputs.
+    * The Network constructor creates a new NetworkTrainer, given a network and double training inputs/outputs.
     */
    public NetworkTrainer(Network initialNetwork, double inputs[][], double outputs[][])
    {
@@ -43,6 +45,9 @@ public class NetworkTrainer
       return;
    }
 
+   /*
+    * The Network constructor creates a new NetworkTrainer, given a network, image file name training inputs, and double training outputs.
+    */
    public NetworkTrainer(Network initialNetwork, String inputFilenames[], double outputs[][])
    {
       PelGetter pelGetter = new PelGetter();
@@ -60,6 +65,9 @@ public class NetworkTrainer
       return;
    }
 
+   /*
+    * The Network constructor creates a new NetworkTrainer, given a network and image file name training inputs/outputs.
+    */
    public NetworkTrainer(Network initialNetwork, String inputFilenames[], String outputFilenames[])
    {
       PelGetter pelGetter = new PelGetter();

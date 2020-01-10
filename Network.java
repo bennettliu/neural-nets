@@ -19,6 +19,7 @@
  * dThresholdF             |  The derivative of the threshold function.
  * dotProduct              |  Calculates the dot product for node (n, i)'s input values.
  * eval                    |  Evaluates the network, given an array of inputs.
+ * eval                    |  Evaluates the network, given an image file name.
  * step                    |  step trains the network using steepest descent, given a training case.
  * setWeights              |  Sets the weights to a given matrix.
  */
@@ -256,7 +257,10 @@ public class Network
       
       return Arrays.copyOfRange(activationVals[outputIndex], 0, outputs);     // Return output values
    }  // public double[] eval(double inputArray[])
-
+   
+   /*
+    * eval evaluates and returns the output of the network, given an image file name, which provides an array of inputs.
+    */
    public double[] eval(String filename)
    { 
       PelGetter pelGetter = new PelGetter();
@@ -274,37 +278,38 @@ public class Network
       double omega[][] = new double[layers][maxNodes];
       double results[] = eval(inputArray);
       
+      // Evaluate last weight layer
       layer = layers - 2;
-      for (int j = 0; j < nodesInLayer[layer + 1]; j++)                          // Current weight's destination node
+      for (int j = 0; j < nodesInLayer[layer + 1]; j++)                                // Current weight's destination node
       {
-         psi = (results[j] - expectedOutputs[j]) * dThresholdF(dotVals[layer + 1][j]);   // Calculate psi
-         for (int i = 0; i < nodesInLayer[layer]; i++)                           // Current weight's source node
+         psi = (results[j] - expectedOutputs[j]) * dThresholdF(dotVals[layer + 1][j]); // Calculate psi
+         for (int i = 0; i < nodesInLayer[layer]; i++)                                 // Current weight's source node
          {
-            omega[layer][i] += psi * weights[layer][i][j];                    // Set omega for next round
+            omega[layer][i] += psi * weights[layer][i][j];                             // Set omega for next round
             weights[layer][i][j] -= lambda * activationVals[layer][i] * psi;
          }
       }
       
-      // Evaluate all hidden weight layers
-      for (layer = layers - 3; layer >= 1; layer--)                              // Calculate dWeight with backpropagation
+      // Evaluate all middle weight layers
+      for (layer = layers - 3; layer >= 1; layer--)                                    // Calculate dWeight with backpropagation
       {
-         for (int j = 0; j < nodesInLayer[layer + 1]; j++)                       // Current weight's destination node
+         for (int j = 0; j < nodesInLayer[layer + 1]; j++)                             // Current weight's destination node
          {
-            psi = omega[layer + 1][j] * dThresholdF(dotVals[layer + 1][j]);   // Calculate psi
-            for (int i = 0; i < nodesInLayer[layer]; i++)                        // Current weight's source node
+            psi = omega[layer + 1][j] * dThresholdF(dotVals[layer + 1][j]);            // Calculate psi
+            for (int i = 0; i < nodesInLayer[layer]; i++)                              // Current weight's source node
             {
-               omega[layer][i] += psi * weights[layer][i][j];                 // Set omega for next round
+               omega[layer][i] += psi * weights[layer][i][j];                          // Set omega for next round
                weights[layer][i][j] -= lambda * activationVals[layer][i] * psi;
             }
          }
       }  // for (layer = layers - 3; layer >= 1; layer--)
 
-      // Evaluate first weight layer
+      // Update first weight layer
       layer = 0;
-      for (int j = 0; j < nodesInLayer[layer + 1]; j++)                       // Current weight's destination node
+      for (int j = 0; j < nodesInLayer[layer + 1]; j++)                                // Current weight's destination node
       {
-         psi = omega[layer + 1][j] * dThresholdF(dotVals[layer + 1][j]);   // Calculate psi
-         for (int i = 0; i < nodesInLayer[layer]; i++)                        // Current weight's source node
+         psi = omega[layer + 1][j] * dThresholdF(dotVals[layer + 1][j]);               // Calculate psi
+         for (int i = 0; i < nodesInLayer[layer]; i++)                                 // Current weight's source node
          {
             weights[layer][i][j] -= lambda * activationVals[layer][i] * psi;
          }
